@@ -1,0 +1,209 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>미분과 적분 with Python</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.css">
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.js"></script>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/contrib/auto-render.min.js"
+  onload="renderMathInElement(document.body,{delimiters:[{left:'$$',right:'$$',display:true},{left:'\\(',right:'\\)',display:false}]})"></script>
+<style>
+:root{
+  --bg:#fbfaf7; --surface:#ffffff; --text:#1f2328; --muted:#5d6670; --line:#e3e0d8;
+  --accent:#c2410c; --curve:#1d4ed8; --area:rgba(29,78,216,.14); --code-bg:#f3f1ec;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#16181c; --surface:#1e2127; --text:#e6e8eb; --muted:#9aa3ad; --line:#2f343c;
+    --accent:#fb923c; --curve:#7aa2ff; --area:rgba(122,162,255,.18); --code-bg:#262a31;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#16181c; --surface:#1e2127; --text:#e6e8eb; --muted:#9aa3ad; --line:#2f343c;
+  --accent:#fb923c; --curve:#7aa2ff; --area:rgba(122,162,255,.18); --code-bg:#262a31;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);
+  font:16px/1.75 "Pretendard","Apple SD Gothic Neo","Malgun Gothic",system-ui,sans-serif}
+main{max-width:760px;margin:0 auto;padding:48px 16px 80px}
+header p{color:var(--muted);margin:.25rem 0 0}
+h1{font-size:2rem;line-height:1.3;margin:0}
+h2{font-size:1.35rem;margin:3rem 0 .75rem;padding-top:1.5rem;border-top:1px solid var(--line)}
+h2 .n{color:var(--accent);margin-right:.4em}
+h3{font-size:1.05rem;margin:1.75rem 0 .5rem}
+nav{margin:1.5rem 0 0;padding:14px 18px;background:var(--surface);border:1px solid var(--line);border-radius:10px}
+nav ol{margin:0;padding-left:1.2em}
+nav a{color:inherit}
+pre{background:var(--code-bg);border-radius:8px;padding:14px 16px;overflow-x:auto;font-size:14px;line-height:1.55}
+code{font-family:"JetBrains Mono",Consolas,monospace}
+p code,li code,td code{background:var(--code-bg);padding:1px 5px;border-radius:4px;font-size:.9em}
+.out{color:var(--muted)}
+figure{margin:1.25rem 0;background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:12px}
+figure svg{display:block;width:100%;max-width:480px;height:auto;margin:0 auto}
+figcaption{text-align:center;color:var(--muted);font-size:.9rem}
+svg .ax{stroke:var(--muted);stroke-width:1}
+svg .curve{fill:none;stroke:var(--curve);stroke-width:2.5}
+svg .accent{fill:none;stroke:var(--accent);stroke-width:2;stroke-dasharray:6 4}
+svg .dot{fill:var(--accent)}
+svg .area{fill:var(--area);stroke:none}
+svg .bar{fill:var(--area);stroke:var(--curve);stroke-width:1}
+svg text{fill:var(--text);font-size:13px}
+svg text.acc{fill:var(--accent)}
+.note{border-left:3px solid var(--accent);background:var(--surface);padding:10px 16px;border-radius:0 8px 8px 0;margin:1.25rem 0}
+.table-wrap{overflow-x:auto}
+table{border-collapse:collapse;width:100%;font-size:.95rem}
+th,td{border-bottom:1px solid var(--line);padding:8px 10px;text-align:left;word-break:keep-all}
+#summary table{min-width:560px}
+td code{white-space:nowrap}
+body{word-break:keep-all}
+th{color:var(--muted);font-weight:600}
+td.num{font-variant-numeric:tabular-nums;font-family:"JetBrains Mono",Consolas,monospace}
+footer{margin-top:3rem;color:var(--muted);font-size:.9rem}
+footer a{color:inherit}
+</style>
+</head>
+<body>
+<main>
+<header>
+  <h1>개발자를 위한 미분과 적분</h1>
+  <p>Python(SymPy)으로 직접 계산하며 정리하는 미분, 편도함수, 연쇄 법칙, 적분</p>
+  <nav>
+    <ol>
+      <li><a href="#diff">미분: 순간 기울기</a></li>
+      <li><a href="#partial">편도함수</a></li>
+      <li><a href="#chain">연쇄 법칙</a></li>
+      <li><a href="#integral">적분: 곡선 아래의 넓이</a></li>
+      <li><a href="#summary">한눈에 정리</a></li>
+    </ol>
+  </nav>
+</header>
+
+<section id="diff">
+<h2><span class="n">1</span>미분: 순간 기울기</h2>
+<p>미분은 함수가 한 지점에서 얼마나 빠르게 변하는지, 즉 그 지점의 <strong>기울기</strong>를 구하는 일입니다. 기울기가 0인 곳은 최댓값이나 최솟값 후보가 되기 때문에, 손실 함수를 줄여 나가는 경사 하강법이 바로 이 성질을 이용합니다.</p>
+
+<figure>
+  <svg viewBox="0 0 360 240" role="img" aria-label="y=x² 곡선과 x=2에서의 접선"><line class="ax" x1="30.0" y1="192.9" x2="330.0" y2="192.9"/><line class="ax" x1="70.5" y1="210.0" x2="70.5" y2="30.0"/><path class="curve" d="M46.2,191.3 L48.5,191.6 L50.7,191.8 L53.0,192.1 L55.3,192.2 L57.5,192.4 L59.8,192.6 L62.1,192.7 L64.3,192.8 L66.6,192.8 L68.9,192.8 L71.1,192.9 L73.4,192.8 L75.6,192.8 L77.9,192.7 L80.2,192.6 L82.4,192.5 L84.7,192.3 L87.0,192.2 L89.2,191.9 L91.5,191.7 L93.8,191.5 L96.0,191.2 L98.3,190.9 L100.5,190.5 L102.8,190.1 L105.1,189.7 L107.3,189.3 L109.6,188.9 L111.9,188.4 L114.1,187.9 L116.4,187.4 L118.6,186.8 L120.9,186.2 L123.2,185.6 L125.4,185.0 L127.7,184.3 L130.0,183.6 L132.2,182.9 L134.5,182.2 L136.8,181.4 L139.0,180.6 L141.3,179.8 L143.5,179.0 L145.8,178.1 L148.1,177.2 L150.3,176.3 L152.6,175.3 L154.9,174.3 L157.1,173.3 L159.4,172.3 L161.7,171.2 L163.9,170.1 L166.2,169.0 L168.4,167.9 L170.7,166.7 L173.0,165.5 L175.2,164.3 L177.5,163.0 L179.8,161.7 L182.0,160.4 L184.3,159.1 L186.6,157.8 L188.8,156.4 L191.1,155.0 L193.3,153.5 L195.6,152.1 L197.9,150.6 L200.1,149.1 L202.4,147.5 L204.7,145.9 L206.9,144.4 L209.2,142.7 L211.5,141.1 L213.7,139.4 L216.0,137.7 L218.2,136.0 L220.5,134.2 L222.8,132.4 L225.0,130.6 L227.3,128.8 L229.6,126.9 L231.8,125.0 L234.1,123.1 L236.4,121.2 L238.6,119.2 L240.9,117.2 L243.1,115.2 L245.4,113.1 L247.7,111.0 L249.9,108.9 L252.2,106.8 L254.5,104.7 L256.7,102.5 L259.0,100.3 L261.2,98.0 L263.5,95.8 L265.8,93.5 L268.0,91.1 L270.3,88.8 L272.6,86.4 L274.8,84.0 L277.1,81.6 L279.4,79.2 L281.6,76.7 L283.9,74.2 L286.1,71.6 L288.4,69.1 L290.7,66.5 L292.9,63.9 L295.2,61.2 L297.5,58.6 L299.7,55.9 L302.0,53.2 L304.3,50.4 L306.5,47.6 L308.8,44.8 L311.0,42.0 L313.3,39.2 L315.6,36.3 L317.8,33.4"/><path class="accent" d="M143.5,199.7 L330.0,42.0"/><circle class="dot" cx="232.7" cy="124.3" r="4"/><text x="240.7" y="140.3">(2, 4)</text><text x="212.4" y="52.3">y = x²</text><text class="acc" x="293.5" y="103.7">기울기 4</text></svg>
+  <figcaption>y = x² 위의 점 (2, 4)에서 그은 접선. 기울기는 4입니다.</figcaption>
+</figure>
+
+<h3>두 점으로 기울기 근사하기</h3>
+<p>곡선 위의 두 점을 잡고 그 사이 직선의 기울기를 구한 뒤, 두 점의 간격을 점점 좁히면 순간 기울기에 가까워집니다.</p>
+$$f'(x) = \lim_{h \to 0} \frac{f(x+h) - f(x)}{h}$$
+<p>\(f(x)=x^2\)에서 \(x=2\)와 \(x=2.1\)을 잇는 직선의 기울기는 \(\frac{4.41-4}{0.1}=4.1\)입니다. 간격을 0.00001까지 좁히면 4에 매우 가까워집니다.</p>
+<pre><code>def derivative_approx(f, x, step=1e-5):
+    return (f(x + step) - f(x)) / step
+
+print(derivative_approx(lambda v: v ** 2, 2))</code>
+<span class="out"># 4.000010000027032</span></pre>
+
+<h3>SymPy로 정확한 도함수 구하기</h3>
+<p><code>diff()</code>로 도함수를 구하고 <code>subs()</code>로 원하는 x 값을 대입합니다.</p>
+<pre><code>from sympy import symbols, diff
+
+x = symbols('x')
+f = x ** 2
+dx_f = diff(f, x)
+print(dx_f)              <span class="out"># 2*x</span>
+print(dx_f.subs(x, 2))   <span class="out"># 4</span></code></pre>
+</section>
+
+<section id="partial">
+<h2><span class="n">2</span>편도함수</h2>
+<p>변수가 여러 개인 함수에서는 <strong>한 변수에 대해서만</strong> 미분하고 나머지 변수는 상수로 취급합니다. 이것을 편미분이라 하고, 결과를 편도함수라고 합니다.</p>
+$$f(x, y) = 2x^3 + 3y^3$$
+$$\frac{\partial f}{\partial x} = 6x^2, \qquad \frac{\partial f}{\partial y} = 9y^2$$
+<p>점 \((1, 2)\)에서 x 방향 기울기는 \(6\), y 방향 기울기는 \(36\)입니다. 이 두 값을 모은 벡터 \((6, 36)\)이 기울기 벡터(gradient)이며, 경사 하강법은 이 벡터의 반대 방향으로 이동합니다.</p>
+<pre><code>from sympy import symbols, diff
+
+x, y = symbols('x y')
+f = 2 * x ** 3 + 3 * y ** 3
+dfdx = diff(f, x)   <span class="out"># 6*x**2</span>
+dfdy = diff(f, y)   <span class="out"># 9*y**2</span>
+print(dfdx.subs({x: 1, y: 2}), dfdy.subs({x: 1, y: 2}))
+<span class="out"># 6 36</span></code></pre>
+</section>
+
+<section id="chain">
+<h2><span class="n">3</span>연쇄 법칙</h2>
+<p>함수 안에 함수가 들어 있는 합성함수는 바깥 함수의 도함수와 안쪽 함수의 도함수를 <strong>곱해서</strong> 미분합니다.</p>
+$$y = x^2 + 1, \qquad z = y^3 - 2$$
+$$\frac{dz}{dx} = \frac{dz}{dy} \cdot \frac{dy}{dx} = 3y^2 \cdot 2x = 6x\,(x^2+1)^2$$
+<p>예를 들어 \(x=1\)이면 \(6 \cdot 1 \cdot 2^2 = 24\)입니다. 신경망의 역전파는 출력층부터 입력층까지 층마다의 기울기를 이렇게 곱해 나가는 과정입니다.</p>
+<pre><code>from sympy import symbols, diff
+
+x = symbols('x')
+y = x ** 2 + 1
+z = y ** 3 - 2
+dz_dx = diff(z, x)
+print(dz_dx)             <span class="out"># 6*x*(x**2 + 1)**2</span>
+print(dz_dx.subs(x, 1))  <span class="out"># 24</span></code></pre>
+</section>
+
+<section id="integral">
+<h2><span class="n">4</span>적분: 곡선 아래의 넓이</h2>
+<p>적분은 곡선과 x축 사이의 넓이를 구하는 일이며, 미분의 역연산입니다. 확률 분포에서 특정 구간의 확률을 구할 때도 적분이 쓰입니다.</p>
+
+<h3>도형으로 확인하기</h3>
+<p>\(f(x)=2x\)를 0부터 1까지 적분하면 밑변 1, 높이 2인 삼각형의 넓이와 같습니다.</p>
+$$\int_0^1 2x\,dx = \frac{1 \times 2}{2} = 1$$
+<figure>
+  <svg viewBox="0 0 360 240" role="img" aria-label="y=2x 아래 0부터 1까지의 삼각형 넓이"><line class="ax" x1="30.0" y1="191.4" x2="330.0" y2="191.4"/><line class="ax" x1="67.5" y1="210.0" x2="67.5" y2="30.0"/><path class="area" d="M67.5,191.4 L255.0,67.2 L255.0,191.4 Z"/><path class="curve" d="M67.5,191.4 L301.9,36.2"/><text x="151.9" y="54.8">y = 2x</text><text x="183.8" y="169.7">넓이 = 1</text><text x="251.0" y="207.4">1</text></svg>
+  <figcaption>y = 2x 아래, 0 ≤ x ≤ 1 구간의 넓이는 삼각형 넓이 1입니다.</figcaption>
+</figure>
+
+<h3>직사각형으로 근사하기</h3>
+<p>곡선이 직선이 아니면 구간을 잘게 나눠 직사각형 넓이를 더해 근사합니다. 아래 그림은 \(f(x)=x^2+1\)의 0~1 구간을 직사각형 5개로 나눈 모습이며, 각 직사각형의 높이는 칸 가운데 지점의 함숫값입니다.</p>
+<figure>
+  <svg viewBox="0 0 360 240" role="img" aria-label="y=x²+1 아래를 직사각형 5개로 근사"><line class="ax" x1="30.0" y1="189.2" x2="330.0" y2="189.2"/><line class="ax" x1="70.0" y1="210.0" x2="70.0" y2="30.0"/><rect class="bar" x="70.0" y="119.3" width="40.0" height="69.9"/><rect class="bar" x="110.0" y="113.8" width="40.0" height="75.5"/><rect class="bar" x="150.0" y="102.7" width="40.0" height="86.5"/><rect class="bar" x="190.0" y="86.1" width="40.0" height="103.2"/><rect class="bar" x="230.0" y="63.9" width="40.0" height="125.3"/><path class="curve" d="M50.0,119.3 L52.2,119.4 L54.3,119.6 L56.5,119.7 L58.7,119.8 L60.8,119.9 L63.0,119.9 L65.2,120.0 L67.3,120.0 L69.5,120.0 L71.7,120.0 L73.8,120.0 L76.0,119.9 L78.2,119.9 L80.3,119.8 L82.5,119.7 L84.7,119.6 L86.8,119.5 L89.0,119.4 L91.2,119.2 L93.3,119.1 L95.5,118.9 L97.7,118.7 L99.8,118.5 L102.0,118.2 L104.2,118.0 L106.3,117.7 L108.5,117.4 L110.7,117.1 L112.8,116.8 L115.0,116.5 L117.2,116.1 L119.3,115.8 L121.5,115.4 L123.7,115.0 L125.8,114.6 L128.0,114.2 L130.2,113.7 L132.3,113.3 L134.5,112.8 L136.7,112.3 L138.8,111.8 L141.0,111.3 L143.2,110.7 L145.3,110.2 L147.5,109.6 L149.7,109.0 L151.8,108.4 L154.0,107.8 L156.2,107.1 L158.3,106.5 L160.5,105.8 L162.7,105.1 L164.8,104.4 L167.0,103.7 L169.2,103.0 L171.3,102.2 L173.5,101.5 L175.7,100.7 L177.8,99.9 L180.0,99.1 L182.2,98.2 L184.3,97.4 L186.5,96.5 L188.7,95.6 L190.8,94.7 L193.0,93.8 L195.2,92.9 L197.3,91.9 L199.5,91.0 L201.7,90.0 L203.8,89.0 L206.0,88.0 L208.2,87.0 L210.3,85.9 L212.5,84.9 L214.7,83.8 L216.8,82.7 L219.0,81.6 L221.2,80.4 L223.3,79.3 L225.5,78.1 L227.7,77.0 L229.8,75.8 L232.0,74.6 L234.2,73.4 L236.3,72.1 L238.5,70.9 L240.7,69.6 L242.8,68.3 L245.0,67.0 L247.2,65.7 L249.3,64.3 L251.5,63.0 L253.7,61.6 L255.8,60.2 L258.0,58.8 L260.2,57.4 L262.3,56.0 L264.5,54.5 L266.7,53.1 L268.8,51.6 L271.0,50.1 L273.2,48.6 L275.3,47.0 L277.5,45.5 L279.7,43.9 L281.8,42.3 L284.0,40.7 L286.2,39.1 L288.3,37.5 L290.5,35.8 L292.7,34.2 L294.8,32.5 L297.0,30.8 L299.2,29.1 L301.3,27.4 L303.5,25.6 L305.7,23.9 L307.8,22.1 L310.0,20.3"/><text x="214.0" y="40.4">y = x² + 1</text><text x="266.0" y="205.2">1</text></svg>
+  <figcaption>직사각형 5개로 근사한 y = x² + 1 아래의 넓이(약 1.33)</figcaption>
+</figure>
+<pre><code>def approximate_integral(f, a, b, n):
+    width = (b - a) / n
+    return sum(f(a + width * (i + 0.5)) * width for i in range(n))
+
+for n in (5, 1000, 1_000_000):
+    print(n, approximate_integral(lambda v: v ** 2 + 1, 0, 1, n))</code></pre>
+<div class="table-wrap">
+<table>
+  <thead><tr><th>직사각형 개수</th><th>근사값</th></tr></thead>
+  <tbody>
+    <tr><td>5</td><td class="num">1.33</td></tr>
+    <tr><td>1,000</td><td class="num">1.33333325</td></tr>
+    <tr><td>1,000,000</td><td class="num">1.3333333333332</td></tr>
+    <tr><td>정확한 값</td><td class="num">4/3 ≈ 1.3333333333333</td></tr>
+  </tbody>
+</table>
+</div>
+
+<h3>SymPy로 정확한 값 구하기</h3>
+$$\int_0^1 (x^2 + 1)\,dx = \left[\frac{x^3}{3} + x\right]_0^1 = \frac{4}{3}$$
+<pre><code>from sympy import symbols, integrate
+
+x = symbols('x')
+print(integrate(x ** 2 + 1, (x, 0, 1)))   <span class="out"># 4/3</span></code></pre>
+</section>
+
+<section id="summary">
+<h2><span class="n">5</span>한눈에 정리</h2>
+<div class="table-wrap">
+<table>
+  <thead><tr><th>개념</th><th>의미</th><th>SymPy</th><th>예제 결과</th></tr></thead>
+  <tbody>
+    <tr><td>미분</td><td>한 지점의 기울기</td><td><code>diff(f, x)</code></td><td>(x²)′ = 2x, x=2에서 4</td></tr>
+    <tr><td>편미분</td><td>한 변수 방향의 기울기</td><td><code>diff(f, y)</code></td><td>(1, 2)에서 (6, 36)</td></tr>
+    <tr><td>연쇄 법칙</td><td>합성함수는 도함수끼리 곱함</td><td><code>diff(z, x)</code></td><td>6x(x²+1)², x=1에서 24</td></tr>
+    <tr><td>적분</td><td>곡선 아래의 넓이</td><td><code>integrate(f, (x, a, b))</code></td><td>∫₀¹(x²+1)dx = 4/3</td></tr>
+  </tbody>
+</table>
+</div>
+<div class="note">모든 결과값은 Python 3.11, SymPy 1.14로 직접 실행해 확인했습니다.</div>
+</section>
+
+<footer>
+  참고한 글: <a href="https://puppy-foot-it.tistory.com/450">[개발자를 위한 수학] 미분, 적분 (+파이썬)</a> — 기록자_Recordian, 2024. 이 문서는 해당 글의 주제 구성을 바탕으로 새로 작성했습니다.
+</footer>
+</main>
+</body>
+</html>

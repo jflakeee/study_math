@@ -1,0 +1,745 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>미분 적분 상세 풀이</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.css">
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.js"></script>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/contrib/auto-render.min.js"
+  onload="renderMathInElement(document.body,{delimiters:[{left:'$$',right:'$$',display:true},{left:'\\(',right:'\\)',display:false}]})"></script>
+<style>
+:root{
+  --bg:#fbfaf7; --surface:#ffffff; --text:#1f2328; --muted:#5d6670; --line:#e3e0d8;
+  --accent:#c2410c; --curve:#1d4ed8; --area:rgba(29,78,216,.14); --code-bg:#f3f1ec;
+  --green:#15803d; --green-bg:rgba(21,128,61,.10); --violet:#7c3aed; --soft:#fff7ed;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#16181c; --surface:#1e2127; --text:#e6e8eb; --muted:#9aa3ad; --line:#2f343c;
+    --accent:#fb923c; --curve:#7aa2ff; --area:rgba(122,162,255,.18); --code-bg:#262a31;
+    --green:#4ade80; --green-bg:rgba(74,222,128,.12); --violet:#c4a5ff; --soft:#2a221b;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#16181c; --surface:#1e2127; --text:#e6e8eb; --muted:#9aa3ad; --line:#2f343c;
+  --accent:#fb923c; --curve:#7aa2ff; --area:rgba(122,162,255,.18); --code-bg:#262a31;
+  --green:#4ade80; --green-bg:rgba(74,222,128,.12); --violet:#c4a5ff; --soft:#2a221b;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);word-break:keep-all;
+  font:17px/1.8 "Pretendard","Apple SD Gothic Neo","Malgun Gothic",system-ui,sans-serif}
+main{max-width:760px;margin:0 auto;padding:48px 16px 80px}
+header p{color:var(--muted);margin:.25rem 0 0}
+h1{font-size:2rem;line-height:1.3;margin:0}
+h2{font-size:1.4rem;margin:3rem 0 .75rem;padding-top:1.5rem;border-top:1px solid var(--line)}
+h2 .n{color:var(--accent);margin-right:.4em}
+h3{font-size:1.1rem;margin:2rem 0 .5rem}
+nav{margin:1.5rem 0 0;padding:14px 18px;background:var(--surface);border:1px solid var(--line);border-radius:10px}
+nav ol{margin:0;padding-left:1.2em}
+nav a{color:inherit}
+.katex-display{overflow-x:auto;overflow-y:hidden;padding:2px 0}
+.katex .text,.katex .text *{font-family:"Pretendard","Apple SD Gothic Neo","Malgun Gothic",sans-serif;font-size:.92em}
+.analogy{background:var(--soft);border-radius:10px;padding:12px 16px;margin:1.25rem 0}
+.analogy b{color:var(--accent)}
+.key{border:2px solid var(--green);background:var(--green-bg);border-radius:10px;padding:10px 16px;margin:1.25rem 0}
+.key b{color:var(--green)}
+ol.steps{list-style:none;counter-reset:s;padding:0;margin:1rem 0}
+ol.steps>li{counter-increment:s;position:relative;padding:12px 16px 12px 52px;margin:10px 0;
+  background:var(--surface);border:1px solid var(--line);border-radius:10px}
+ol.steps>li::before{content:counter(s);position:absolute;left:14px;top:13px;width:26px;height:26px;border-radius:50%;
+  background:var(--accent);color:#fff;font-weight:700;font-size:.85rem;display:flex;align-items:center;justify-content:center}
+ol.steps .katex-display{margin:.5rem 0}
+@media (max-width:480px){ol.steps>li{padding:12px 12px 12px 44px} ol.steps>li::before{left:10px} th,td{padding:8px 6px} .katex-display>.katex{font-size:1.05em}}
+.check{color:var(--green);font-weight:600}
+figure{margin:1.25rem 0;background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:12px}
+figure svg{display:block;width:100%;max-width:480px;height:auto;margin:0 auto}
+figcaption{text-align:center;color:var(--muted);font-size:.9rem}
+svg .ax{stroke:var(--muted);stroke-width:1}
+svg .curve{fill:none;stroke:var(--curve);stroke-width:2.5}
+svg .accent{fill:none;stroke:var(--accent);stroke-width:2;stroke-dasharray:6 4}
+svg .sec1{fill:none;stroke:var(--violet);stroke-width:1.5;opacity:.55}
+svg .sec2{fill:none;stroke:var(--violet);stroke-width:1.5}
+svg .dot{fill:var(--accent)}
+svg .dot2{fill:var(--violet)}
+svg .area{fill:var(--area);stroke:none}
+svg .bar{fill:var(--area);stroke:var(--curve);stroke-width:1}
+svg .sq{fill:var(--area);stroke:var(--curve);stroke-width:1.5}
+svg .strip{fill:var(--soft);stroke:var(--accent);stroke-width:1.5}
+svg .corner{fill:var(--green-bg);stroke:var(--green);stroke-width:1.5}
+svg text{fill:var(--text);font-size:13px}
+svg text.acc{fill:var(--accent)}
+svg text.t1{fill:var(--violet)}
+.flow{display:flex;align-items:center;justify-content:center;gap:6px;flex-wrap:wrap;margin:1.25rem 0;
+  background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:16px 10px}
+.flow .box{border:2px solid var(--curve);border-radius:10px;padding:6px 14px;font-weight:700;text-align:center;min-width:64px}
+.flow .arr{color:var(--accent);font-weight:700;text-align:center;font-size:.9rem;line-height:1.3}
+.flow .arr span{display:block;font-size:1.4rem}
+.table-wrap{overflow-x:auto}
+table{border-collapse:collapse;width:100%;font-size:.95rem}
+th,td{border-bottom:1px solid var(--line);padding:8px 10px;text-align:left}
+th{color:var(--muted);font-weight:600}
+td.num{font-variant-numeric:tabular-nums;font-family:"JetBrains Mono",Consolas,monospace}
+tr.total td{font-weight:700;border-top:2px solid var(--line)}
+details{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:10px 16px;margin:12px 0}
+details summary{cursor:pointer;font-weight:600}
+details[open] summary{margin-bottom:.4rem}
+details .ans{color:var(--green);font-weight:700}
+pre{background:var(--code-bg);border-radius:8px;padding:14px 16px;overflow-x:auto;font-size:14px;line-height:1.55}
+code{font-family:"JetBrains Mono",Consolas,monospace}
+.out{color:var(--muted)}
+footer{margin-top:3rem;color:var(--muted);font-size:.9rem}
+footer a{color:inherit}
+.calc{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:4px 16px;margin:12px 0}
+.calc .ln{display:flex;flex-wrap:wrap;gap:2px 14px;align-items:center;padding:8px 0;border-bottom:1px dashed var(--line)}
+.calc .ln:last-child{border-bottom:none}
+.calc .m{font-size:1.06em}
+.calc .why{color:var(--muted);font-size:.88rem}
+.calc .why::before{content:"← "}
+.calc .ln.res .m{color:var(--green);font-weight:700}
+.calc-title{font-weight:700;margin:1.5rem 0 .25rem}
+.calc-title .tag{display:inline-block;background:var(--accent);color:#fff;border-radius:6px;font-size:.8rem;padding:0 8px;margin-right:6px;vertical-align:2px}
+button.ref{font:inherit;font-size:.85rem;color:var(--accent);background:transparent;cursor:pointer;
+  border:1px solid var(--accent);border-radius:999px;padding:0 9px;margin:1px 0;line-height:1.6;white-space:nowrap}
+button.ref::before{content:"▸ "}
+button.ref[aria-expanded="true"]{background:var(--accent);color:var(--surface)}
+button.ref[aria-expanded="true"]::before{content:"▾ "}
+button.ref:focus-visible,button.ref-close:focus-visible{outline:2px solid var(--curve);outline-offset:2px}
+.ref-panel{border:1px solid var(--accent);border-left-width:4px;background:var(--soft);border-radius:8px;
+  padding:4px 12px 10px;margin:6px 0 10px}
+.ref-panel .ref-title{font-weight:700;margin:.4rem 0}
+.ref-panel .calc{background:var(--surface)}
+.ref-panel p{margin:.4rem 0}
+@media (max-width:480px){.ref-panel{padding:4px 8px 8px} .ref-panel .calc{padding:2px 10px}
+  .ref-panel .calc .m{font-size:.9em} .ref-panel .ref-panel{margin-left:-4px;margin-right:-4px}}
+button.ref-close{font:inherit;font-size:.85rem;color:var(--muted);background:var(--surface);cursor:pointer;
+  border:1px solid var(--line);border-radius:6px;padding:2px 12px;margin-top:4px}
+</style>
+</head>
+<body>
+<main>
+<header>
+  <h1>미분과 적분, 한 줄도 건너뛰지 않는 풀이</h1>
+  <p>숫자를 대입하는 순간, 거듭제곱 계산, 소수 곱셈과 나눗셈, 분수 덧셈까지 모든 계산을 한 줄씩 펼쳐 썼어요. 각 줄 옆의 <span style="color:var(--muted)">← 설명</span>은 "왜 그렇게 되는지"예요. 앞에서 설명한 내용을 가리키는 <b style="color:var(--accent)">▸ 버튼</b>을 누르면 그 줄 바로 아래에 해당 풀이가 펼쳐져요.</p>
+  <nav>
+    <ol>
+      <li><a href="#tools">먼저 알아 둘 계산 도구</a></li>
+      <li><a href="#diff">미분: \(y=x^2\)의 \(x=2\)에서 기울기</a></li>
+      <li><a href="#rule">미분 규칙이 나오는 과정</a></li>
+      <li><a href="#partial">편미분: \(f(x,y)=2x^3+3y^3\)</a></li>
+      <li><a href="#chain">연쇄 법칙: \(z=(x^2+1)^3-2\)</a></li>
+      <li><a href="#integral">적분: 곡선 아래 넓이</a></li>
+      <li><a href="#practice">연습 문제 상세 풀이</a></li>
+    </ol>
+  </nav>
+</header>
+
+<section id="tools">
+<h2><span class="n">0</span>먼저 알아 둘 계산 도구</h2>
+<p>풀이에서 계속 쓰는 계산 규칙 다섯 가지예요. 본문에서 <b>▸ 도구 1</b>처럼 생긴 버튼을 누르면 위로 돌아올 필요 없이 그 자리에서 펼쳐져요.</p>
+
+<p class="calc-title"><span class="tag">도구 1</span>거듭제곱은 같은 수를 여러 번 곱한 것</p>
+<div class="calc">
+  <div class="ln"><span class="m">\(2^3 = 2 \times 2 \times 2\)</span><span class="why">작은 3은 "3번 곱한다"는 뜻</span></div>
+  <div class="ln"><span class="m">\(= 4 \times 2\)</span><span class="why">앞의 \(2 \times 2\)부터 계산</span></div>
+  <div class="ln res"><span class="m">\(= 8\)</span></div>
+</div>
+<div class="calc">
+  <div class="ln"><span class="m">\(1^2 = 1 \times 1 = 1\)</span><span class="why">1은 몇 번 곱해도 1</span></div>
+  <div class="ln"><span class="m">\(0^3 = 0 \times 0 \times 0 = 0\)</span><span class="why">0은 몇 번 곱해도 0</span></div>
+</div>
+
+<p class="calc-title"><span class="tag">도구 2</span>소수의 곱셈</p>
+<p>소수점을 떼고 자연수처럼 곱한 다음, 두 수의 소수점 아래 자릿수를 더한 만큼 소수점을 찍어요.</p>
+<div class="calc">
+  <div class="ln"><span class="m">\(2.1 \times 2.1\)</span><span class="why">소수점 아래 1자리 + 1자리 = 2자리</span></div>
+  <div class="ln"><span class="m">\(21 \times 21 = 441\)</span><span class="why">소수점을 떼고 곱하기</span></div>
+  <div class="ln res"><span class="m">\(2.1 \times 2.1 = 4.41\)</span><span class="why">441에서 뒤 2자리 앞에 소수점</span></div>
+</div>
+
+<p class="calc-title"><span class="tag">도구 3</span>0.1, 0.01, 0.001로 나누기</p>
+<p>0.1로 나누면 10을 곱한 것과 같고, 0.01로 나누면 100, 0.001로 나누면 1000을 곱한 것과 같아요. 소수점을 그 0의 개수만큼 오른쪽으로 옮기면 돼요.</p>
+<div class="calc">
+  <div class="ln"><span class="m">\(0.41 \div 0.1 = 0.41 \times 10 = 4.1\)</span><span class="why">소수점을 오른쪽으로 1칸</span></div>
+  <div class="ln"><span class="m">\(0.0401 \div 0.01 = 4.01\)</span><span class="why">100을 곱한 것과 같음, 오른쪽으로 2칸</span></div>
+  <div class="ln"><span class="m">\(0.004001 \div 0.001 = 4.001\)</span><span class="why">오른쪽으로 3칸</span></div>
+</div>
+
+<p class="calc-title"><span class="tag">도구 4</span>분배법칙: 괄호 안 모든 항에 곱하기</p>
+<div class="calc">
+  <div class="ln"><span class="m">\((a+b)(c+d)\)</span><span class="why">앞 괄호의 각 항이 뒤 괄호의 각 항과 한 번씩 만남</span></div>
+  <div class="ln"><span class="m">\(= ac + ad + bc + bd\)</span><span class="why">a×c, a×d, b×c, b×d를 모두 더함</span></div>
+</div>
+
+<p class="calc-title"><span class="tag">도구 5</span>분수의 덧셈은 분모를 맞춘 다음</p>
+<div class="calc">
+  <div class="ln"><span class="m">\(\displaystyle \frac{1}{3} + 1 = \frac{1}{3} + \frac{3}{3}\)</span><span class="why">1을 분모 3인 분수로 바꾸면 \(\frac{3}{3}\)</span></div>
+  <div class="ln res"><span class="m">\(\displaystyle = \frac{1+3}{3} = \frac{4}{3}\)</span><span class="why">분모가 같으면 분자끼리 더함</span></div>
+</div>
+</section>
+
+<section id="diff">
+<h2><span class="n">1</span>미분: \(y=x^2\)의 \(x=2\)에서 기울기</h2>
+<p>곡선 위 한 점의 기울기는 바로 구할 수 없어서, <strong>옆에 점을 하나 더 찍고</strong> 두 점 사이 기울기를 구한 뒤 옆 점을 점점 가까이 가져가요. 두 점 사이 기울기 공식은 이거예요.</p>
+$$\text{기울기} = \frac{(\text{옆 점의 } y) - (\text{원래 점의 } y)}{(\text{옆 점의 } x) - (\text{원래 점의 } x)}$$
+
+<p class="calc-title"><span class="tag">1단계</span>원래 점의 좌표 구하기</p>
+<div class="calc">
+  <div class="ln"><span class="m">\(y = x^2\)</span><span class="why">주어진 함수</span></div>
+  <div class="ln"><span class="m">\(y = 2^2\)</span><span class="why">x 자리에 2를 대입</span></div>
+  <div class="ln"><span class="m">\(y = 2 \times 2\)</span><span class="why"><button type="button" class="ref" data-ref="tool-1" aria-expanded="false">도구 1</button>: 2를 2번 곱함</span></div>
+  <div class="ln res"><span class="m">\(y = 4\)</span><span class="why">그래서 원래 점은 \((2, 4)\)</span></div>
+</div>
+
+<p class="calc-title"><span class="tag">2단계</span>옆 점을 \(x=3\)에 찍기 (거리 \(h=1\))</p>
+<div class="calc">
+  <div class="ln"><span class="m">\(y = 3^2 = 3 \times 3 = 9\)</span><span class="why">x 자리에 3을 대입 → 옆 점 \((3, 9)\)</span></div>
+  <div class="ln"><span class="m">\(\displaystyle \text{기울기} = \frac{9 - 4}{3 - 2}\)</span><span class="why">공식에 옆 점 \((3,9)\), 원래 점 \((2,4)\) 대입</span></div>
+  <div class="ln"><span class="m">\(\displaystyle = \frac{5}{1}\)</span><span class="why">위: \(9-4=5\), 아래: \(3-2=1\)</span></div>
+  <div class="ln res"><span class="m">\(= 5\)</span><span class="why">1로 나누면 그대로</span></div>
+</div>
+
+<figure>
+  <svg viewBox="0 0 360 240" role="img" aria-label="두 점을 잇는 직선이 접선에 가까워지는 모습"><line class="ax" x1="30.0" y1="195.0" x2="330.0" y2="195.0"/><line class="ax" x1="61.6" y1="210.0" x2="61.6" y2="30.0"/><path class="curve" d="M37.9,193.7 L40.2,193.9 L42.6,194.1 L44.9,194.3 L47.2,194.5 L49.6,194.7 L51.9,194.8 L54.2,194.9 L56.6,194.9 L58.9,195.0 L61.3,195.0 L63.6,195.0 L65.9,195.0 L68.3,194.9 L70.6,194.8 L72.9,194.7 L75.3,194.5 L77.6,194.4 L79.9,194.2 L82.3,194.0 L84.6,193.7 L86.9,193.5 L89.3,193.2 L91.6,192.8 L93.9,192.5 L96.3,192.1 L98.6,191.7 L101.0,191.3 L103.3,190.8 L105.6,190.3 L108.0,189.8 L110.3,189.3 L112.6,188.7 L115.0,188.1 L117.3,187.5 L119.6,186.9 L122.0,186.2 L124.3,185.5 L126.6,184.8 L129.0,184.1 L131.3,183.3 L133.7,182.5 L136.0,181.7 L138.3,180.8 L140.7,179.9 L143.0,179.0 L145.3,178.1 L147.7,177.2 L150.0,176.2 L152.3,175.2 L154.7,174.1 L157.0,173.1 L159.3,172.0 L161.7,170.9 L164.0,169.7 L166.3,168.6 L168.7,167.4 L171.0,166.2 L173.4,164.9 L175.7,163.7 L178.0,162.4 L180.4,161.0 L182.7,159.7 L185.0,158.3 L187.4,156.9 L189.7,155.5 L192.0,154.0 L194.4,152.6 L196.7,151.1 L199.0,149.5 L201.4,148.0 L203.7,146.4 L206.1,144.8 L208.4,143.1 L210.7,141.5 L213.1,139.8 L215.4,138.1 L217.7,136.3 L220.1,134.5 L222.4,132.8 L224.7,130.9 L227.1,129.1 L229.4,127.2 L231.7,125.3 L234.1,123.4 L236.4,121.4 L238.8,119.5 L241.1,117.5 L243.4,115.4 L245.8,113.4 L248.1,111.3 L250.4,109.2 L252.8,107.0 L255.1,104.9 L257.4,102.7 L259.8,100.5 L262.1,98.2 L264.4,96.0 L266.8,93.7 L269.1,91.3 L271.4,89.0 L273.8,86.6 L276.1,84.2 L278.5,81.8 L280.8,79.4 L283.1,76.9 L285.5,74.4 L287.8,71.8 L290.1,69.3 L292.5,66.7 L294.8,64.1 L297.1,61.5 L299.5,58.8 L301.8,56.1 L304.1,53.4 L306.5,50.7 L308.8,47.9 L311.2,45.1 L313.5,42.3 L315.8,39.4 L318.2,36.6"/><path class="sec1" d="M156.3,195.0 L322.1,37.5"/><circle class="dot2" cx="298.4" cy="60.0" r="3.5"/><path class="sec2" d="M156.3,189.0 L322.1,47.2"/><circle class="dot2" cx="258.9" cy="101.2" r="3.5"/><path class="accent" d="M156.3,183.0 L322.1,57.0"/><circle class="dot" cx="219.5" cy="135.0" r="4"/><text x="227.5" y="153.0">(2, 4)</text><text x="140.5" y="52.5">y = x²</text><text class="t1" x="236.4" y="64.0">(3, 9)</text></svg>
+  <figcaption>옆 점이 (3, 9)에서 가까이 올수록 보라색 직선이 주황색 점선(접선)에 가까워져요.</figcaption>
+</figure>
+
+<p class="calc-title"><span class="tag">3단계</span>옆 점을 \(x=2.1\)에 찍기 (거리 \(h=0.1\))</p>
+<div class="calc">
+  <div class="ln"><span class="m">\(y = 2.1^2 = 2.1 \times 2.1\)</span><span class="why">x 자리에 2.1을 대입</span></div>
+  <div class="ln"><span class="m">\(21 \times 21 = 441\)</span><span class="why"><button type="button" class="ref" data-ref="tool-2" aria-expanded="false">도구 2</button>: 소수점을 떼고 곱함</span></div>
+  <div class="ln"><span class="m">\(y = 4.41\)</span><span class="why">소수점 아래 1+1=2자리 → 옆 점 \((2.1, 4.41)\)</span></div>
+  <div class="ln"><span class="m">\(\displaystyle \text{기울기} = \frac{4.41 - 4}{2.1 - 2}\)</span><span class="why">공식에 대입</span></div>
+  <div class="ln"><span class="m">\(\displaystyle = \frac{0.41}{0.1}\)</span><span class="why">위: \(4.41-4=0.41\), 아래: \(2.1-2=0.1\)</span></div>
+  <div class="ln res"><span class="m">\(= 4.1\)</span><span class="why"><button type="button" class="ref" data-ref="tool-3" aria-expanded="false">도구 3</button>: 소수점을 오른쪽으로 1칸</span></div>
+</div>
+
+<p class="calc-title"><span class="tag">4단계</span>옆 점을 \(x=2.01\)에 찍기 (거리 \(h=0.01\))</p>
+<div class="calc">
+  <div class="ln"><span class="m">\(y = 2.01^2 = 2.01 \times 2.01\)</span><span class="why">x 자리에 2.01을 대입</span></div>
+  <div class="ln"><span class="m">\(201 \times 201 = 40401\)</span><span class="why">\(201 \times 200 = 40200\), 여기에 \(201\)을 더함</span></div>
+  <div class="ln"><span class="m">\(y = 4.0401\)</span><span class="why">소수점 아래 2+2=4자리</span></div>
+  <div class="ln"><span class="m">\(\displaystyle \text{기울기} = \frac{4.0401 - 4}{2.01 - 2}\)</span><span class="why">공식에 대입</span></div>
+  <div class="ln"><span class="m">\(\displaystyle = \frac{0.0401}{0.01}\)</span><span class="why">위: \(4.0401 - 4 = 0.0401\), 아래: \(2.01 - 2 = 0.01\)</span></div>
+  <div class="ln res"><span class="m">\(= 4.01\)</span><span class="why"><button type="button" class="ref" data-ref="tool-3" aria-expanded="false">도구 3</button>: 소수점을 오른쪽으로 2칸</span></div>
+</div>
+
+<p class="calc-title"><span class="tag">5단계</span>옆 점을 \(x=2.001\)에 찍기 (거리 \(h=0.001\))</p>
+<div class="calc">
+  <div class="ln"><span class="m">\(y = 2.001 \times 2.001\)</span><span class="why">x 자리에 2.001을 대입</span></div>
+  <div class="ln"><span class="m">\(2001 \times 2001 = 4004001\)</span><span class="why">\(2001 \times 2000 = 4002000\), 여기에 \(2001\)을 더함</span></div>
+  <div class="ln"><span class="m">\(y = 4.004001\)</span><span class="why">소수점 아래 3+3=6자리</span></div>
+  <div class="ln"><span class="m">\(\displaystyle \text{기울기} = \frac{4.004001 - 4}{2.001 - 2}\)</span><span class="why">공식에 대입</span></div>
+  <div class="ln"><span class="m">\(\displaystyle = \frac{0.004001}{0.001}\)</span><span class="why">위: \(4.004001 - 4 = 0.004001\), 아래: \(2.001 - 2 = 0.001\)</span></div>
+  <div class="ln res"><span class="m">\(= 4.001\)</span><span class="why"><button type="button" class="ref" data-ref="tool-3" aria-expanded="false">도구 3</button>: 소수점을 오른쪽으로 3칸</span></div>
+</div>
+
+<p class="calc-title"><span class="tag">6단계</span>결과를 모아서 규칙 찾기</p>
+<div class="table-wrap">
+<table>
+  <thead><tr><th>거리 \(h\)</th><th>기울기</th><th>4와의 차이</th></tr></thead>
+  <tbody>
+    <tr><td class="num">1</td><td class="num">5</td><td class="num">1</td></tr>
+    <tr><td class="num">0.1</td><td class="num">4.1</td><td class="num">0.1</td></tr>
+    <tr><td class="num">0.01</td><td class="num">4.01</td><td class="num">0.01</td></tr>
+    <tr><td class="num">0.001</td><td class="num">4.001</td><td class="num">0.001</td></tr>
+  </tbody>
+</table>
+</div>
+<p>표를 보면 <strong>기울기 = 4 + h</strong>라는 규칙이 보여요. 정말 그런지 h를 문자 그대로 두고 확인해 볼게요.</p>
+
+<p class="calc-title"><span class="tag">7단계</span>h를 문자로 두고 계산하기</p>
+<div class="calc">
+  <div class="ln"><span class="m">\(\text{옆 점의 } x = 2 + h\)</span><span class="why">원래 점에서 h만큼 옆</span></div>
+  <div class="ln"><span class="m">\(\text{옆 점의 } y = (2+h)^2\)</span><span class="why">x 자리에 \(2+h\)를 대입</span></div>
+  <div class="ln"><span class="m">\(= (2+h)(2+h)\)</span><span class="why"><button type="button" class="ref" data-ref="tool-1" aria-expanded="false">도구 1</button>: 제곱은 2번 곱한 것</span></div>
+  <div class="ln"><span class="m">\(= 2 \times 2 + 2 \times h + h \times 2 + h \times h\)</span><span class="why"><button type="button" class="ref" data-ref="tool-4" aria-expanded="false">도구 4</button>: 분배법칙</span></div>
+  <div class="ln"><span class="m">\(= 4 + 2h + 2h + h^2\)</span><span class="why">각 곱셈 계산</span></div>
+  <div class="ln"><span class="m">\(= 4 + 4h + h^2\)</span><span class="why">\(2h + 2h = 4h\)</span></div>
+  <div class="ln"><span class="m">\(\displaystyle \text{기울기} = \frac{(4 + 4h + h^2) - 4}{(2 + h) - 2}\)</span><span class="why">공식에 대입</span></div>
+  <div class="ln"><span class="m">\(\displaystyle = \frac{4h + h^2}{h}\)</span><span class="why">위: \(4 - 4 = 0\), 아래: \(2 - 2 = 0\)</span></div>
+  <div class="ln"><span class="m">\(\displaystyle = \frac{4h}{h} + \frac{h^2}{h}\)</span><span class="why">분자의 두 항을 각각 h로 나눔</span></div>
+  <div class="ln res"><span class="m">\(= 4 + h\)</span><span class="why">\(\frac{4h}{h} = 4\), \(\frac{h \times h}{h} = h\)</span></div>
+</div>
+<p>h = 0.1을 넣으면 4 + 0.1 = 4.1로 표와 똑같아요. h를 0에 한없이 가깝게 만들면 \(4 + h\)는 <strong>4</strong>에 한없이 가까워져요.</p>
+<div class="key"><b>답</b> · \(y = x^2\)의 \(x = 2\)에서 기울기는 <b>4</b></div>
+</section>
+
+<section id="rule">
+<h2><span class="n">2</span>미분 규칙이 나오는 과정</h2>
+<p>이번엔 2 대신 어떤 수든 될 수 있는 \(x\)를 그대로 두고 계산해서, 모든 점에서 통하는 기울기 공식(도함수)을 만들어요.</p>
+<div class="analogy"><b>기호 읽는 법:</b> \((x^2)'\)처럼 괄호 오른쪽 위에 작은 따옴표(<b>프라임</b>)를 붙이면 "괄호 안의 식을 미분한 것", 즉 "괄호 안 식의 기울기 공식"이라는 뜻이에요. \((x^2)' = 2x\)는 "\(x^2\)을 미분하면 \(2x\)"라고 읽어요.</div>
+
+<p class="calc-title"><span class="tag">규칙 1</span>\(x^2\)을 미분하면 \(2x\)</p>
+<div class="calc">
+  <div class="ln"><span class="m">\((x+h)^2 = (x+h)(x+h)\)</span><span class="why">옆 점의 y</span></div>
+  <div class="ln"><span class="m">\(= x \cdot x + x \cdot h\)</span><span class="why"><button type="button" class="ref" data-ref="tool-4" aria-expanded="false">도구 4</button>: 분배법칙, 앞 괄호의 x를 곱함</span></div>
+  <div class="ln"><span class="m">\(\quad + h \cdot x + h \cdot h\)</span><span class="why">앞 괄호의 h를 곱함 (윗줄에 이어짐)</span></div>
+  <div class="ln"><span class="m">\(= x^2 + 2xh + h^2\)</span><span class="why">\(xh + hx = 2xh\)</span></div>
+  <div class="ln"><span class="m">\((x+h)^2 - x^2 = 2xh + h^2\)</span><span class="why">y의 증가량: \(x^2 - x^2 = 0\)</span></div>
+  <div class="ln"><span class="m">\(\displaystyle \frac{2xh + h^2}{h} = 2x + h\)</span><span class="why">x의 증가량 h로 나눔</span></div>
+  <div class="ln res"><span class="m">\((x^2)' = 2x\)</span><span class="why">h를 0에 가깝게 하면 h가 사라짐</span></div>
+</div>
+<figure>
+  <svg viewBox="0 0 400 250" role="img" aria-label="정사각형의 변을 h만큼 늘렸을 때 늘어난 넓이"><rect class="sq" x="40" y="40" width="150" height="150"/><rect class="strip" x="190" y="40" width="36" height="150"/><rect class="strip" x="40" y="190" width="150" height="36"/><rect class="corner" x="190" y="190" width="36" height="36"/><text x="101.0" y="120.0">x × x</text><text x="196" y="120.0">xh</text><text x="107.0" y="213.0">xh</text><text x="198" y="213.0">h²</text><text x="111.0" y="30">x</text><text x="204.0" y="30">h</text><text x="18" y="120.0">x</text><text x="18" y="213.0">h</text><text x="246" y="100">새로 늘어난 넓이</text><text x="246" y="124">= xh + xh + h²</text><text x="246" y="148">= 2xh + h²</text></svg>
+  <figcaption>늘어난 넓이 \(2xh + h^2\)을 그림으로 보면 이렇게 생겼어요.</figcaption>
+</figure>
+<p>검산: \(x = 2\)를 대입하면 \(2 \times 2 = 4\). <button type="button" class="ref" data-ref="diff-7" aria-expanded="false">1장에서 구한 값</button>과 같아요.</p>
+
+<p class="calc-title"><span class="tag">규칙 2</span>\(x^3\)을 미분하면 \(3x^2\)</p>
+<div class="calc">
+  <div class="ln"><span class="m">\((x+h)^3 = (x+h)^2 (x+h)\)</span><span class="why">3번 곱한 것 = 2번 곱한 것 × 1번 더</span></div>
+  <div class="ln"><span class="m">\(= (x^2 + 2xh + h^2)(x + h)\)</span><span class="why"><button type="button" class="ref" data-ref="rule-1" aria-expanded="false">규칙 1</button>에서 구한 \((x+h)^2\)</span></div>
+  <div class="ln"><span class="m">\(x^2 \times (x + h) = x^3 + x^2h\)</span><span class="why"><button type="button" class="ref" data-ref="tool-4" aria-expanded="false">도구 4</button>: 앞 괄호의 첫째 항</span></div>
+  <div class="ln"><span class="m">\(2xh \times (x + h) = 2x^2h + 2xh^2\)</span><span class="why">둘째 항</span></div>
+  <div class="ln"><span class="m">\(h^2 \times (x + h) = xh^2 + h^3\)</span><span class="why">셋째 항</span></div>
+  <div class="ln"><span class="m">\(x^2h + 2x^2h = 3x^2h\)</span><span class="why">같은 모양끼리 모음</span></div>
+  <div class="ln"><span class="m">\(2xh^2 + xh^2 = 3xh^2\)</span><span class="why">같은 모양끼리 모음</span></div>
+  <div class="ln"><span class="m">\((x+h)^3\)</span><span class="why">위 결과를 모두 더하면</span></div>
+  <div class="ln"><span class="m">\(= x^3 + 3x^2h + 3xh^2 + h^3\)</span><span class="why">같은 모양끼리 모은 결과 사용</span></div>
+  <div class="ln"><span class="m">\((x+h)^3 - x^3\)</span><span class="why">y의 증가량</span></div>
+  <div class="ln"><span class="m">\(= 3x^2h + 3xh^2 + h^3\)</span><span class="why">\(x^3 - x^3 = 0\)</span></div>
+  <div class="ln"><span class="m">\(\displaystyle \frac{3x^2h + 3xh^2 + h^3}{h}\)</span><span class="why">x의 증가량 h로 나눔</span></div>
+  <div class="ln"><span class="m">\(= 3x^2 + 3xh + h^2\)</span><span class="why">각 항에서 h를 하나씩 지움: \(3x^2h \div h = 3x^2\), \(3xh^2 \div h = 3xh\), \(h^3 \div h = h^2\)</span></div>
+  <div class="ln res"><span class="m">\((x^3)' = 3x^2\)</span><span class="why">h를 0에 가깝게 하면 \(3xh\)와 \(h^2\)이 사라짐</span></div>
+</div>
+
+<p class="calc-title"><span class="tag">규칙 3</span>앞에 곱한 숫자는 그대로 따라 나온다</p>
+<div class="calc">
+  <div class="ln"><span class="m">\(2x^3\)의 증가량은 \(x^3\)의 증가량의 2배</span><span class="why">모든 y 값이 2배라서 증가량도 2배</span></div>
+  <div class="ln res"><span class="m">\((2x^3)' = 2 \times 3x^2 = 6x^2\)</span><span class="why"><button type="button" class="ref" data-ref="rule-2" aria-expanded="false">규칙 2</button>에 2를 곱함</span></div>
+</div>
+
+<p class="calc-title"><span class="tag">규칙 4</span>숫자만 있는 항을 미분하면 0</p>
+<div class="calc">
+  <div class="ln"><span class="m">\(y = 5\)</span><span class="why">x가 무엇이든 y는 항상 5</span></div>
+  <div class="ln"><span class="m">\(\displaystyle \frac{5 - 5}{h} = \frac{0}{h} = 0\)</span><span class="why">y의 증가량이 0</span></div>
+  <div class="ln res"><span class="m">\((5)' = 0\)</span><span class="why">수평선은 기울기 0</span></div>
+</div>
+
+<p class="calc-title"><span class="tag">규칙 5</span>더해진 식은 각각 미분해서 더한다</p>
+<div class="calc">
+  <div class="ln"><span class="m">\((x^2 + 1)' = (x^2)' + (1)'\)</span><span class="why">증가량도 각각 더해지기 때문</span></div>
+  <div class="ln res"><span class="m">\(= 2x + 0 = 2x\)</span><span class="why"><button type="button" class="ref" data-ref="rule-1" aria-expanded="false">규칙 1</button>과 <button type="button" class="ref" data-ref="rule-4" aria-expanded="false">규칙 4</button></span></div>
+</div>
+</section>
+
+<section id="partial">
+<h2><span class="n">3</span>편미분: \(f(x,y)=2x^3+3y^3\)의 점 \((1,2)\)</h2>
+<p>변수가 x, y 두 개예요. 한 방향으로만 움직인다고 생각하고, <strong>움직이지 않는 변수는 숫자로 바꿔서</strong> 미분해요.</p>
+<div class="analogy"><b>기호 읽는 법:</b> \(\dfrac{\partial f}{\partial x}\)는 "f를 <b>x에 대해서만</b> 미분한 것(x 방향 기울기)"이라는 뜻이에요. \(\partial\)는 "라운드" 또는 "델"이라고 읽고, 분수처럼 생겼지만 나눗셈이 아니라 하나의 기호예요.</div>
+
+<p class="calc-title"><span class="tag">x 방향</span>y = 2로 고정하고 x로 미분</p>
+<div class="calc">
+  <div class="ln"><span class="m">\(f = 2x^3 + 3y^3\)</span><span class="why">주어진 함수</span></div>
+  <div class="ln"><span class="m">\(f = 2x^3 + 3 \times 2^3\)</span><span class="why">움직이지 않는 y 자리에 2를 대입</span></div>
+  <div class="ln"><span class="m">\(2^3 = 2 \times 2 \times 2 = 8\)</span><span class="why"><button type="button" class="ref" data-ref="tool-1" aria-expanded="false">도구 1</button></span></div>
+  <div class="ln"><span class="m">\(f = 2x^3 + 3 \times 8 = 2x^3 + 24\)</span><span class="why">\(3 \times 8 = 24\)</span></div>
+  <div class="ln"><span class="m">\(\displaystyle \frac{\partial f}{\partial x} = (2x^3)' + (24)'\)</span><span class="why"><button type="button" class="ref" data-ref="rule-5" aria-expanded="false">규칙 5</button>: 각각 미분</span></div>
+  <div class="ln"><span class="m">\(= 6x^2 + 0 = 6x^2\)</span><span class="why"><button type="button" class="ref" data-ref="rule-3" aria-expanded="false">규칙 3</button>과 <button type="button" class="ref" data-ref="rule-4" aria-expanded="false">규칙 4</button></span></div>
+  <div class="ln"><span class="m">\(= 6 \times 1^2\)</span><span class="why">x 자리에 1을 대입</span></div>
+  <div class="ln"><span class="m">\(= 6 \times 1\)</span><span class="why">\(1^2 = 1 \times 1 = 1\)</span></div>
+  <div class="ln res"><span class="m">\(= 6\)</span></div>
+</div>
+
+<p class="calc-title"><span class="tag">y 방향</span>x = 1로 고정하고 y로 미분</p>
+<div class="calc">
+  <div class="ln"><span class="m">\(f = 2 \times 1^3 + 3y^3\)</span><span class="why">움직이지 않는 x 자리에 1을 대입</span></div>
+  <div class="ln"><span class="m">\(1^3 = 1 \times 1 \times 1 = 1\)</span><span class="why"><button type="button" class="ref" data-ref="tool-1" aria-expanded="false">도구 1</button></span></div>
+  <div class="ln"><span class="m">\(f = 2 \times 1 + 3y^3 = 2 + 3y^3\)</span><span class="why">\(2 \times 1 = 2\)</span></div>
+  <div class="ln"><span class="m">\(\displaystyle \frac{\partial f}{\partial y} = (2)' + (3y^3)'\)</span><span class="why"><button type="button" class="ref" data-ref="rule-5" aria-expanded="false">규칙 5</button>: 각각 미분</span></div>
+  <div class="ln"><span class="m">\(= 0 + 3 \times 3y^2 = 9y^2\)</span><span class="why"><button type="button" class="ref" data-ref="rule-4" aria-expanded="false">규칙 4</button>, 그리고 <button type="button" class="ref" data-ref="rule-2" aria-expanded="false">규칙 2</button> <button type="button" class="ref" data-ref="rule-3" aria-expanded="false">규칙 3</button> (x 대신 y)</span></div>
+  <div class="ln"><span class="m">\(= 9 \times 2^2\)</span><span class="why">y 자리에 2를 대입</span></div>
+  <div class="ln"><span class="m">\(= 9 \times 4\)</span><span class="why">\(2^2 = 2 \times 2 = 4\)</span></div>
+  <div class="ln res"><span class="m">\(= 36\)</span></div>
+</div>
+<div class="key"><b>답</b> · 점 \((1, 2)\)에서 x 방향 기울기 <b>6</b>, y 방향 기울기 <b>36</b></div>
+</section>
+
+<section id="chain">
+<h2><span class="n">4</span>연쇄 법칙: \(y = x^2 + 1\), \(z = y^3 - 2\)의 \(x = 1\)</h2>
+<p>x가 y를 바꾸고, y가 z를 바꾸는 사슬이에요. 각 단계의 기울기를 따로 구해서 <strong>곱해요</strong>.</p>
+<div class="analogy"><b>기호 읽는 법:</b> \(\dfrac{dy}{dx}\)는 "x가 변할 때 y가 변하는 기울기", 즉 y를 x로 미분한 것이에요. "디와이 디엑스"라고 읽어요. 마찬가지로 \(\dfrac{dz}{dy}\)는 z를 y로, \(\dfrac{dz}{dx}\)는 z를 x로 미분한 것이에요.</div>
+<div class="flow">
+  <div class="box">x = 1</div>
+  <div class="arr">× 2<span>→</span></div>
+  <div class="box">y = 2</div>
+  <div class="arr">× 12<span>→</span></div>
+  <div class="box">z = 6</div>
+  <div class="arr" style="color:var(--green)">합치면<span>× 24</span></div>
+</div>
+
+<p class="calc-title"><span class="tag">1단계</span>x = 1일 때 y와 z 값</p>
+<div class="calc">
+  <div class="ln"><span class="m">\(y = 1^2 + 1\)</span><span class="why">x 자리에 1을 대입</span></div>
+  <div class="ln"><span class="m">\(= 1 \times 1 + 1 = 1 + 1 = 2\)</span><span class="why"><button type="button" class="ref" data-ref="tool-1" aria-expanded="false">도구 1</button></span></div>
+  <div class="ln"><span class="m">\(z = 2^3 - 2\)</span><span class="why">y 자리에 방금 구한 2를 대입</span></div>
+  <div class="ln res"><span class="m">\(= 2 \times 2 \times 2 - 2 = 8 - 2 = 6\)</span><span class="why"><button type="button" class="ref" data-ref="tool-1" aria-expanded="false">도구 1</button></span></div>
+</div>
+
+<p class="calc-title"><span class="tag">2단계</span>첫째 고리: x에 대한 y의 기울기</p>
+<div class="calc">
+  <div class="ln"><span class="m">\(\displaystyle \frac{dy}{dx} = (x^2 + 1)'\)</span><span class="why">y의 식을 x로 미분</span></div>
+  <div class="ln"><span class="m">\(= (x^2)' + (1)' = 2x + 0 = 2x\)</span><span class="why"><button type="button" class="ref" data-ref="rule-5" aria-expanded="false">규칙 5</button> <button type="button" class="ref" data-ref="rule-1" aria-expanded="false">규칙 1</button> <button type="button" class="ref" data-ref="rule-4" aria-expanded="false">규칙 4</button></span></div>
+  <div class="ln res"><span class="m">\(= 2 \times 1 = 2\)</span><span class="why">x 자리에 1을 대입</span></div>
+</div>
+
+<p class="calc-title"><span class="tag">3단계</span>둘째 고리: y에 대한 z의 기울기</p>
+<div class="calc">
+  <div class="ln"><span class="m">\(\displaystyle \frac{dz}{dy} = (y^3 - 2)'\)</span><span class="why">z의 식을 y로 미분</span></div>
+  <div class="ln"><span class="m">\(= (y^3)' - (2)' = 3y^2 - 0 = 3y^2\)</span><span class="why"><button type="button" class="ref" data-ref="rule-2" aria-expanded="false">규칙 2</button> <button type="button" class="ref" data-ref="rule-4" aria-expanded="false">규칙 4</button> (빼기도 각각 미분)</span></div>
+  <div class="ln"><span class="m">\(= 3 \times 2^2\)</span><span class="why">y 자리에 2를 대입 (x가 아니라 y 값!)</span></div>
+  <div class="ln res"><span class="m">\(= 3 \times 4 = 12\)</span><span class="why">\(2^2 = 2 \times 2 = 4\)</span></div>
+</div>
+
+<p class="calc-title"><span class="tag">4단계</span>두 고리를 곱하기</p>
+<div class="calc">
+  <div class="ln"><span class="m">\(\displaystyle \frac{dz}{dx} = \frac{dz}{dy} \times \frac{dy}{dx}\)</span><span class="why">연쇄 법칙</span></div>
+  <div class="ln res"><span class="m">\(= 12 \times 2 = 24\)</span><span class="why"><button type="button" class="ref" data-ref="chain-3" aria-expanded="false">3단계</button> × <button type="button" class="ref" data-ref="chain-2" aria-expanded="false">2단계</button></span></div>
+</div>
+
+<p class="calc-title"><span class="tag">5단계</span>검산: x를 1.001로 아주 조금 늘려 보기</p>
+<div class="calc">
+  <div class="ln"><span class="m">\(1.001^2 = 1.001 \times 1.001\)</span><span class="why">x 자리에 1.001을 대입</span></div>
+  <div class="ln"><span class="m">\(1001 \times 1001 = 1002001\)</span><span class="why">\(1001 \times 1000 = 1001000\)에 1001을 더함</span></div>
+  <div class="ln"><span class="m">\(1.001^2 = 1.002001\)</span><span class="why">소수점 아래 3+3=6자리</span></div>
+  <div class="ln"><span class="m">\(y = 1.002001 + 1 = 2.002001\)</span><span class="why">y = x² + 1</span></div>
+  <div class="ln"><span class="m">\(y^3 = 2.002001^3 \approx 8.024036\)</span><span class="why">손 계산 과정: <button type="button" class="ref" data-ref="cube" aria-expanded="false">펼쳐 보기</button></span></div>
+  <div class="ln"><span class="m">\(z = 8.024036 - 2 = 6.024036\)</span><span class="why">z = y³ − 2</span></div>
+  <div class="ln"><span class="m">\(\displaystyle \text{기울기} \approx \frac{6.024036 - 6}{1.001 - 1}\)</span><span class="why">두 점 사이 기울기 공식</span></div>
+  <div class="ln"><span class="m">\(\displaystyle = \frac{0.024036}{0.001}\)</span><span class="why">위: \(6.024036 - 6 = 0.024036\), 아래: \(1.001 - 1 = 0.001\)</span></div>
+  <div class="ln res"><span class="m">\(\approx 24.036\)</span><span class="why"><button type="button" class="ref" data-ref="tool-3" aria-expanded="false">도구 3</button>: 소수점을 오른쪽으로 3칸 → 24에 아주 가까움 ✓</span></div>
+</div>
+
+<p class="calc-title"><span class="tag">참고</span>x를 문자로 둔 일반 공식</p>
+<div class="calc">
+  <div class="ln"><span class="m">\(\displaystyle \frac{dz}{dy} = 3y^2 = 3(x^2+1)^2\)</span><span class="why">y 자리에 \(x^2 + 1\)을 그대로 넣음</span></div>
+  <div class="ln"><span class="m">\(\displaystyle \frac{dz}{dx} = 3(x^2+1)^2 \times 2x\)</span><span class="why">\(\frac{dy}{dx} = 2x\)를 곱함</span></div>
+  <div class="ln"><span class="m">\(= 6x(x^2+1)^2\)</span><span class="why">숫자끼리 정리: \(3 \times 2 = 6\)</span></div>
+  <div class="ln"><span class="m">\(= 6 \times 1 \times (1^2+1)^2\)</span><span class="why">x 자리에 1을 대입</span></div>
+  <div class="ln"><span class="m">\(= 6 \times 1 \times 2^2 = 6 \times 1 \times 4\)</span><span class="why">괄호 안: \(1 + 1 = 2\), 그다음 \(2^2 = 4\)</span></div>
+  <div class="ln res"><span class="m">\(= 24\)</span><span class="why"><button type="button" class="ref" data-ref="chain-4" aria-expanded="false">4단계</button>와 같은 답</span></div>
+</div>
+<div class="key"><b>답</b> · \(x = 1\)에서 z의 기울기는 <b>24</b></div>
+</section>
+
+<section id="integral">
+<h2><span class="n">5</span>적분: 곡선 아래 넓이</h2>
+
+<h3>문제 1: \(y = 2x\) 아래, x가 0부터 1까지의 넓이</h3>
+<figure>
+  <svg viewBox="0 0 360 240" role="img" aria-label="y=2x 아래 0부터 1까지의 삼각형 넓이"><line class="ax" x1="30.0" y1="191.4" x2="330.0" y2="191.4"/><line class="ax" x1="67.5" y1="210.0" x2="67.5" y2="30.0"/><path class="area" d="M67.5,191.4 L255.0,67.2 L255.0,191.4 Z"/><path class="curve" d="M67.5,191.4 L301.9,36.2"/><text x="151.9" y="54.8">y = 2x</text><text x="183.8" y="169.7">넓이 = 1</text><text x="251.0" y="207.4">1</text></svg>
+  <figcaption>색칠한 부분은 직각삼각형이에요.</figcaption>
+</figure>
+<p class="calc-title"><span class="tag">방법 1</span>삼각형 넓이 공식</p>
+<div class="calc">
+  <div class="ln"><span class="m">\(\text{밑변} = 1 - 0 = 1\)</span><span class="why">x가 0부터 1까지</span></div>
+  <div class="ln"><span class="m">\(\text{높이} = 2 \times 1 = 2\)</span><span class="why">\(y = 2x\)에 x = 1을 대입</span></div>
+  <div class="ln"><span class="m">\(\displaystyle \text{넓이} = \frac{\text{밑변} \times \text{높이}}{2} = \frac{1 \times 2}{2}\)</span><span class="why">삼각형 넓이 공식에 대입</span></div>
+  <div class="ln res"><span class="m">\(\displaystyle = \frac{2}{2} = 1\)</span></div>
+</div>
+<p class="calc-title"><span class="tag">방법 2</span>미분을 거꾸로</p>
+<p>원리는 <button type="button" class="ref" data-ref="anti" aria-expanded="false">미분을 거꾸로 하는 방법</button>을 눌러 보세요. (아래 문제 2의 5단계와 같은 내용이에요.)</p>
+<div class="calc">
+  <div class="ln"><span class="m">\((x^2)' = 2x\)</span><span class="why"><button type="button" class="ref" data-ref="rule-1" aria-expanded="false">규칙 1</button>: 미분해서 \(2x\)가 되는 식은 \(x^2\)</span></div>
+  <div class="ln"><span class="m">\(F(x) = x^2\)</span></div>
+  <div class="ln"><span class="m">\(F(1) - F(0) = 1^2 - 0^2\)</span><span class="why">끝값 1, 시작값 0을 각각 대입</span></div>
+  <div class="ln res"><span class="m">\(= 1 - 0 = 1\)</span><span class="why">방법 1과 같은 답 ✓</span></div>
+</div>
+
+<h3>문제 2: \(y = x^2 + 1\) 아래, x가 0부터 1까지의 넓이</h3>
+<figure>
+  <svg viewBox="0 0 360 240" role="img" aria-label="y=x²+1 아래를 직사각형 5개로 나눈 모습"><line class="ax" x1="30.0" y1="189.2" x2="330.0" y2="189.2"/><line class="ax" x1="70.0" y1="210.0" x2="70.0" y2="30.0"/><rect class="bar" x="70.0" y="119.3" width="40.0" height="69.9"/><rect class="bar" x="110.0" y="113.8" width="40.0" height="75.5"/><rect class="bar" x="150.0" y="102.7" width="40.0" height="86.5"/><rect class="bar" x="190.0" y="86.1" width="40.0" height="103.2"/><rect class="bar" x="230.0" y="63.9" width="40.0" height="125.3"/><path class="curve" d="M50.0,119.3 L52.2,119.4 L54.3,119.6 L56.5,119.7 L58.7,119.8 L60.8,119.9 L63.0,119.9 L65.2,120.0 L67.3,120.0 L69.5,120.0 L71.7,120.0 L73.8,120.0 L76.0,119.9 L78.2,119.9 L80.3,119.8 L82.5,119.7 L84.7,119.6 L86.8,119.5 L89.0,119.4 L91.2,119.2 L93.3,119.1 L95.5,118.9 L97.7,118.7 L99.8,118.5 L102.0,118.2 L104.2,118.0 L106.3,117.7 L108.5,117.4 L110.7,117.1 L112.8,116.8 L115.0,116.5 L117.2,116.1 L119.3,115.8 L121.5,115.4 L123.7,115.0 L125.8,114.6 L128.0,114.2 L130.2,113.7 L132.3,113.3 L134.5,112.8 L136.7,112.3 L138.8,111.8 L141.0,111.3 L143.2,110.7 L145.3,110.2 L147.5,109.6 L149.7,109.0 L151.8,108.4 L154.0,107.8 L156.2,107.1 L158.3,106.5 L160.5,105.8 L162.7,105.1 L164.8,104.4 L167.0,103.7 L169.2,103.0 L171.3,102.2 L173.5,101.5 L175.7,100.7 L177.8,99.9 L180.0,99.1 L182.2,98.2 L184.3,97.4 L186.5,96.5 L188.7,95.6 L190.8,94.7 L193.0,93.8 L195.2,92.9 L197.3,91.9 L199.5,91.0 L201.7,90.0 L203.8,89.0 L206.0,88.0 L208.2,87.0 L210.3,85.9 L212.5,84.9 L214.7,83.8 L216.8,82.7 L219.0,81.6 L221.2,80.4 L223.3,79.3 L225.5,78.1 L227.7,77.0 L229.8,75.8 L232.0,74.6 L234.2,73.4 L236.3,72.1 L238.5,70.9 L240.7,69.6 L242.8,68.3 L245.0,67.0 L247.2,65.7 L249.3,64.3 L251.5,63.0 L253.7,61.6 L255.8,60.2 L258.0,58.8 L260.2,57.4 L262.3,56.0 L264.5,54.5 L266.7,53.1 L268.8,51.6 L271.0,50.1 L273.2,48.6 L275.3,47.0 L277.5,45.5 L279.7,43.9 L281.8,42.3 L284.0,40.7 L286.2,39.1 L288.3,37.5 L290.5,35.8 L292.7,34.2 L294.8,32.5 L297.0,30.8 L299.2,29.1 L301.3,27.4 L303.5,25.6 L305.7,23.9 L307.8,22.1 L310.0,20.3"/><text x="214.0" y="40.4">y = x² + 1</text><text x="266.0" y="205.2">1</text></svg>
+  <figcaption>곡선이라 공식이 없으니 폭 0.2인 직사각형 5개로 잘라 어림해요.</figcaption>
+</figure>
+
+<p class="calc-title"><span class="tag">1단계</span>직사각형의 폭</p>
+<div class="calc">
+  <div class="ln"><span class="m">\(\text{폭} = (1 - 0) \div 5\)</span><span class="why">전체 길이를 5칸으로 나눔</span></div>
+  <div class="ln res"><span class="m">\(= 1 \div 5 = 0.2\)</span></div>
+</div>
+
+<p class="calc-title"><span class="tag">2단계</span>각 칸의 가운데 x</p>
+<div class="calc">
+  <div class="ln"><span class="m">1칸: \((0 + 0.2) \div 2 = 0.1\)</span><span class="why">양 끝을 더해서 2로 나누면 가운데</span></div>
+  <div class="ln"><span class="m">2칸: \((0.2 + 0.4) \div 2 = 0.3\)</span></div>
+  <div class="ln"><span class="m">3칸: \((0.4 + 0.6) \div 2 = 0.5\)</span></div>
+  <div class="ln"><span class="m">4칸: \((0.6 + 0.8) \div 2 = 0.7\)</span></div>
+  <div class="ln"><span class="m">5칸: \((0.8 + 1) \div 2 = 0.9\)</span></div>
+</div>
+
+<p class="calc-title"><span class="tag">3단계</span>각 칸의 높이와 넓이 (높이 = \(x^2 + 1\), 넓이 = 높이 × 0.2)</p>
+<div class="calc">
+  <div class="ln"><span class="m">\(\text{1칸: } 0.1^2 = 0.1 \times 0.1 = 0.01\)</span><span class="why">\(1 \times 1 = 1\), 소수점 아래 2자리</span></div>
+  <div class="ln"><span class="m">높이: \(0.01 + 1 = 1.01\)</span><span class="why">\(x^2\)에 1을 더함</span></div>
+  <div class="ln"><span class="m">넓이: \(1.01 \times 0.2 = 0.202\)</span><span class="why">\(101 \times 2 = 202\), 소수점 아래 2+1=3자리</span></div>
+</div>
+<div class="calc">
+  <div class="ln"><span class="m">\(\text{2칸: } 0.3^2 = 0.3 \times 0.3 = 0.09\)</span><span class="why">\(3 \times 3 = 9\), 소수점 아래 2자리</span></div>
+  <div class="ln"><span class="m">높이: \(0.09 + 1 = 1.09\)</span><span class="why">\(x^2\)에 1을 더함</span></div>
+  <div class="ln"><span class="m">넓이: \(1.09 \times 0.2 = 0.218\)</span><span class="why">\(109 \times 2 = 218\), 소수점 아래 2+1=3자리</span></div>
+</div>
+<div class="calc">
+  <div class="ln"><span class="m">\(\text{3칸: } 0.5^2 = 0.5 \times 0.5 = 0.25\)</span><span class="why">\(5 \times 5 = 25\), 소수점 아래 2자리</span></div>
+  <div class="ln"><span class="m">높이: \(0.25 + 1 = 1.25\)</span><span class="why">\(x^2\)에 1을 더함</span></div>
+  <div class="ln"><span class="m">넓이: \(1.25 \times 0.2 = 0.250\)</span><span class="why">\(125 \times 2 = 250\), 소수점 아래 2+1=3자리</span></div>
+</div>
+<div class="calc">
+  <div class="ln"><span class="m">\(\text{4칸: } 0.7^2 = 0.7 \times 0.7 = 0.49\)</span><span class="why">\(7 \times 7 = 49\), 소수점 아래 2자리</span></div>
+  <div class="ln"><span class="m">높이: \(0.49 + 1 = 1.49\)</span><span class="why">\(x^2\)에 1을 더함</span></div>
+  <div class="ln"><span class="m">넓이: \(1.49 \times 0.2 = 0.298\)</span><span class="why">\(149 \times 2 = 298\), 소수점 아래 2+1=3자리</span></div>
+</div>
+<div class="calc">
+  <div class="ln"><span class="m">\(\text{5칸: } 0.9^2 = 0.9 \times 0.9 = 0.81\)</span><span class="why">\(9 \times 9 = 81\), 소수점 아래 2자리</span></div>
+  <div class="ln"><span class="m">높이: \(0.81 + 1 = 1.81\)</span><span class="why">\(x^2\)에 1을 더함</span></div>
+  <div class="ln"><span class="m">넓이: \(1.81 \times 0.2 = 0.362\)</span><span class="why">\(181 \times 2 = 362\), 소수점 아래 2+1=3자리</span></div>
+</div>
+
+<p class="calc-title"><span class="tag">4단계</span>다섯 칸 넓이를 차례로 더하기</p>
+<div class="calc">
+  <div class="ln"><span class="m">\(0.202 + 0.218 = 0.420\)</span><span class="why">1칸 + 2칸</span></div>
+  <div class="ln"><span class="m">\(0.420 + 0.250 = 0.670\)</span><span class="why">+ 3칸</span></div>
+  <div class="ln"><span class="m">\(0.670 + 0.298 = 0.968\)</span><span class="why">+ 4칸</span></div>
+  <div class="ln res"><span class="m">\(0.968 + 0.362 = 1.330\)</span><span class="why">+ 5칸 → 어림한 넓이 1.33</span></div>
+</div>
+<p>칸을 1,000개로 늘리면 1.33333325, 1,000,000개로 늘리면 1.3333333333332로 1.3333…에 점점 가까워져요. 이 값을 정확히 구하는 방법이 다음 단계예요.</p>
+
+<p class="calc-title"><span class="tag">5단계</span>미분해서 \(x^2 + 1\)이 되는 식 \(F(x)\) 찾기</p>
+<div class="calc">
+  <div class="ln"><span class="m">\((x^3)' = 3x^2\)</span><span class="why"><button type="button" class="ref" data-ref="rule-2" aria-expanded="false">규칙 2</button>: \(x^3\)을 미분하면 3이 하나 더 붙음</span></div>
+  <div class="ln"><span class="m">\(\displaystyle \left(\frac{x^3}{3}\right)' = \frac{3x^2}{3} = x^2\)</span><span class="why">미리 3으로 나눠 두면 붙은 3이 지워짐</span></div>
+  <div class="ln"><span class="m">\((x)' = 1\)</span><span class="why">직선 \(y = x\)의 기울기는 1</span></div>
+  <div class="ln res"><span class="m">\(\displaystyle F(x) = \frac{x^3}{3} + x\)</span><span class="why"><button type="button" class="ref" data-ref="rule-5" aria-expanded="false">규칙 5</button>: 둘을 더하면 미분 결과는 \(x^2 + 1\)</span></div>
+</div>
+
+<p class="calc-title"><span class="tag">6단계</span>끝값 1과 시작값 0을 대입해서 빼기</p>
+<div class="calc">
+  <div class="ln"><span class="m">\(\displaystyle F(1) = \frac{1^3}{3} + 1\)</span><span class="why">x 자리에 1을 대입</span></div>
+  <div class="ln"><span class="m">\(\displaystyle = \frac{1}{3} + 1\)</span><span class="why">\(1^3 = 1 \times 1 \times 1 = 1\)</span></div>
+  <div class="ln"><span class="m">\(\displaystyle = \frac{1}{3} + \frac{3}{3} = \frac{4}{3}\)</span><span class="why"><button type="button" class="ref" data-ref="tool-5" aria-expanded="false">도구 5</button>: 분모 맞추기</span></div>
+  <div class="ln"><span class="m">\(\displaystyle F(0) = \frac{0^3}{3} + 0 = \frac{0}{3} + 0 = 0\)</span><span class="why">x 자리에 0을 대입, 0을 3으로 나누면 0</span></div>
+  <div class="ln"><span class="m">\(\displaystyle F(1) - F(0) = \frac{4}{3} - 0 = \frac{4}{3}\)</span><span class="why">끝값에서 시작값을 뺌</span></div>
+  <div class="ln res"><span class="m">\(4 \div 3 = 1.3333\cdots\)</span><span class="why">직사각형으로 어림한 값과 같음 ✓</span></div>
+</div>
+<div class="key"><b>답</b> · \(\displaystyle \int_0^1 (x^2 + 1)\,dx = \frac{4}{3} \approx 1.333\)</div>
+</section>
+
+<section id="practice">
+<h2><span class="n">6</span>연습 문제 상세 풀이</h2>
+<p>먼저 풀어 본 뒤 눌러서 한 줄씩 비교해 보세요.</p>
+
+<details>
+  <summary>문제 1. \(y = x^2\)에서 \(x = 3\)일 때 기울기는?</summary>
+  <div class="calc">
+    <div class="ln"><span class="m">\((x^2)' = 2x\)</span><span class="why"><button type="button" class="ref" data-ref="rule-1" aria-expanded="false">규칙 1</button></span></div>
+    <div class="ln"><span class="m">\(= 2 \times 3\)</span><span class="why">x 자리에 3을 대입</span></div>
+    <div class="ln res"><span class="m">\(= 6\)</span></div>
+  </div>
+</details>
+
+<details>
+  <summary>문제 2. \(f(x, y) = x^2 + y^2\)의 점 \((3, 4)\)에서 x 방향, y 방향 기울기는?</summary>
+  <div class="calc">
+    <div class="ln"><span class="m">\(f = x^2 + 4^2 = x^2 + 16\)</span><span class="why">x 방향: y 자리에 4 대입, \(4 \times 4 = 16\)</span></div>
+    <div class="ln"><span class="m">\(\displaystyle \frac{\partial f}{\partial x} = 2x + 0 = 2x\)</span><span class="why"><button type="button" class="ref" data-ref="rule-1" aria-expanded="false">규칙 1</button> <button type="button" class="ref" data-ref="rule-4" aria-expanded="false">규칙 4</button></span></div>
+    <div class="ln res"><span class="m">\(= 2 \times 3 = 6\)</span><span class="why">x 자리에 3 대입</span></div>
+  </div>
+  <div class="calc">
+    <div class="ln"><span class="m">\(f = 3^2 + y^2 = 9 + y^2\)</span><span class="why">y 방향: x 자리에 3 대입, \(3 \times 3 = 9\)</span></div>
+    <div class="ln"><span class="m">\(\displaystyle \frac{\partial f}{\partial y} = 0 + 2y = 2y\)</span><span class="why"><button type="button" class="ref" data-ref="rule-4" aria-expanded="false">규칙 4</button> <button type="button" class="ref" data-ref="rule-1" aria-expanded="false">규칙 1</button></span></div>
+    <div class="ln res"><span class="m">\(= 2 \times 4 = 8\)</span><span class="why">y 자리에 4 대입</span></div>
+  </div>
+</details>
+
+<details>
+  <summary>문제 3. \(y = x + 1\), \(z = y^2\)일 때 \(x = 2\)에서 z의 기울기는?</summary>
+  <div class="calc">
+    <div class="ln"><span class="m">\(y = 2 + 1 = 3\)</span><span class="why">x 자리에 2 대입</span></div>
+    <div class="ln"><span class="m">\(\displaystyle \frac{dy}{dx} = (x)' + (1)' = 1 + 0 = 1\)</span><span class="why">첫째 고리</span></div>
+    <div class="ln"><span class="m">\(\displaystyle \frac{dz}{dy} = (y^2)' = 2y = 2 \times 3 = 6\)</span><span class="why">둘째 고리, y 자리에 3 대입</span></div>
+    <div class="ln res"><span class="m">\(\displaystyle \frac{dz}{dx} = 6 \times 1 = 6\)</span><span class="why">두 고리를 곱함</span></div>
+  </div>
+</details>
+
+<details>
+  <summary>문제 4. \(y = x\) 아래, x가 0부터 2까지의 넓이 \(\int_0^2 x\,dx\)는?</summary>
+  <div class="calc">
+    <div class="ln"><span class="m">\(\text{밑변} = 2 - 0 = 2,\ \ \text{높이} = 2\)</span><span class="why">방법 1: x = 2일 때 y = 2</span></div>
+    <div class="ln res"><span class="m">\(\displaystyle \frac{2 \times 2}{2} = \frac{4}{2} = 2\)</span><span class="why">삼각형 넓이</span></div>
+  </div>
+  <div class="calc">
+    <div class="ln"><span class="m">\(\displaystyle \left(\frac{x^2}{2}\right)' = \frac{2x}{2} = x\)</span><span class="why">방법 2: 미분해서 x가 되는 식</span></div>
+    <div class="ln"><span class="m">\(\displaystyle F(2) = \frac{2^2}{2} = \frac{4}{2} = 2\)</span><span class="why">x 자리에 2 대입</span></div>
+    <div class="ln"><span class="m">\(\displaystyle F(0) = \frac{0^2}{2} = \frac{0}{2} = 0\)</span><span class="why">x 자리에 0 대입</span></div>
+    <div class="ln res"><span class="m">\(F(2) - F(0) = 2 - 0 = 2\)</span><span class="why">방법 1과 같은 답 ✓</span></div>
+  </div>
+</details>
+</section>
+
+<footer>
+  함께 보기: <a href="calculus_middle_school.html">중학생도 이해하는 미분과 적분</a> · <a href="calculus_python.html">개발자를 위한 미분과 적분 (Python)</a><br>
+  참고한 글: <a href="https://puppy-foot-it.tistory.com/450">[개발자를 위한 수학] 미분, 적분 (+파이썬)</a> — 기록자_Recordian, 2024
+</footer>
+</main>
+<div id="ref-lib" hidden>
+<div data-ref="tool-1"><p class="ref-title">도구 1 · 거듭제곱은 같은 수를 여러 번 곱한 것</p><div class="calc">
+  <div class="ln"><span class="m">\(2^3 = 2 \times 2 \times 2\)</span><span class="why">작은 3은 "3번 곱한다"는 뜻</span></div>
+  <div class="ln"><span class="m">\(= 4 \times 2\)</span><span class="why">앞의 \(2 \times 2\)부터 계산</span></div>
+  <div class="ln res"><span class="m">\(= 8\)</span></div>
+</div>
+<div class="calc">
+  <div class="ln"><span class="m">\(1^2 = 1 \times 1 = 1\)</span><span class="why">1은 몇 번 곱해도 1</span></div>
+  <div class="ln"><span class="m">\(0^3 = 0 \times 0 \times 0 = 0\)</span><span class="why">0은 몇 번 곱해도 0</span></div>
+</div></div>
+<div data-ref="rule-1"><p class="ref-title">규칙 1 · \(x^2\)을 미분하면 \(2x\)</p><div class="calc">
+  <div class="ln"><span class="m">\((x+h)^2 = (x+h)(x+h)\)</span><span class="why">옆 점의 y</span></div>
+  <div class="ln"><span class="m">\(= x \cdot x + x \cdot h\)</span><span class="why"><button type="button" class="ref" data-ref="tool-4" aria-expanded="false">도구 4</button>: 분배법칙, 앞 괄호의 x를 곱함</span></div>
+  <div class="ln"><span class="m">\(\quad + h \cdot x + h \cdot h\)</span><span class="why">앞 괄호의 h를 곱함 (윗줄에 이어짐)</span></div>
+  <div class="ln"><span class="m">\(= x^2 + 2xh + h^2\)</span><span class="why">\(xh + hx = 2xh\)</span></div>
+  <div class="ln"><span class="m">\((x+h)^2 - x^2 = 2xh + h^2\)</span><span class="why">y의 증가량: \(x^2 - x^2 = 0\)</span></div>
+  <div class="ln"><span class="m">\(\displaystyle \frac{2xh + h^2}{h} = 2x + h\)</span><span class="why">x의 증가량 h로 나눔</span></div>
+  <div class="ln res"><span class="m">\((x^2)' = 2x\)</span><span class="why">h를 0에 가깝게 하면 h가 사라짐</span></div>
+</div></div>
+<div data-ref="tool-2"><p class="ref-title">도구 2 · 소수의 곱셈</p><p>소수점을 떼고 자연수처럼 곱한 다음, 두 수의 소수점 아래 자릿수를 더한 만큼 소수점을 찍어요.</p>
+<div class="calc">
+  <div class="ln"><span class="m">\(2.1 \times 2.1\)</span><span class="why">소수점 아래 1자리 + 1자리 = 2자리</span></div>
+  <div class="ln"><span class="m">\(21 \times 21 = 441\)</span><span class="why">소수점을 떼고 곱하기</span></div>
+  <div class="ln res"><span class="m">\(2.1 \times 2.1 = 4.41\)</span><span class="why">441에서 뒤 2자리 앞에 소수점</span></div>
+</div></div>
+<div data-ref="rule-2"><p class="ref-title">규칙 2 · \(x^3\)을 미분하면 \(3x^2\)</p><div class="calc">
+  <div class="ln"><span class="m">\((x+h)^3 = (x+h)^2 (x+h)\)</span><span class="why">3번 곱한 것 = 2번 곱한 것 × 1번 더</span></div>
+  <div class="ln"><span class="m">\(= (x^2 + 2xh + h^2)(x + h)\)</span><span class="why"><button type="button" class="ref" data-ref="rule-1" aria-expanded="false">규칙 1</button>에서 구한 \((x+h)^2\)</span></div>
+  <div class="ln"><span class="m">\(x^2 \times (x + h) = x^3 + x^2h\)</span><span class="why"><button type="button" class="ref" data-ref="tool-4" aria-expanded="false">도구 4</button>: 앞 괄호의 첫째 항</span></div>
+  <div class="ln"><span class="m">\(2xh \times (x + h) = 2x^2h + 2xh^2\)</span><span class="why">둘째 항</span></div>
+  <div class="ln"><span class="m">\(h^2 \times (x + h) = xh^2 + h^3\)</span><span class="why">셋째 항</span></div>
+  <div class="ln"><span class="m">\(x^2h + 2x^2h = 3x^2h\)</span><span class="why">같은 모양끼리 모음</span></div>
+  <div class="ln"><span class="m">\(2xh^2 + xh^2 = 3xh^2\)</span><span class="why">같은 모양끼리 모음</span></div>
+  <div class="ln"><span class="m">\((x+h)^3\)</span><span class="why">위 결과를 모두 더하면</span></div>
+  <div class="ln"><span class="m">\(= x^3 + 3x^2h + 3xh^2 + h^3\)</span><span class="why">같은 모양끼리 모은 결과 사용</span></div>
+  <div class="ln"><span class="m">\((x+h)^3 - x^3\)</span><span class="why">y의 증가량</span></div>
+  <div class="ln"><span class="m">\(= 3x^2h + 3xh^2 + h^3\)</span><span class="why">\(x^3 - x^3 = 0\)</span></div>
+  <div class="ln"><span class="m">\(\displaystyle \frac{3x^2h + 3xh^2 + h^3}{h}\)</span><span class="why">x의 증가량 h로 나눔</span></div>
+  <div class="ln"><span class="m">\(= 3x^2 + 3xh + h^2\)</span><span class="why">각 항에서 h를 하나씩 지움: \(3x^2h \div h = 3x^2\), \(3xh^2 \div h = 3xh\), \(h^3 \div h = h^2\)</span></div>
+  <div class="ln res"><span class="m">\((x^3)' = 3x^2\)</span><span class="why">h를 0에 가깝게 하면 \(3xh\)와 \(h^2\)이 사라짐</span></div>
+</div></div>
+<div data-ref="tool-3"><p class="ref-title">도구 3 · 0.1, 0.01, 0.001로 나누기</p><p>0.1로 나누면 10을 곱한 것과 같고, 0.01로 나누면 100, 0.001로 나누면 1000을 곱한 것과 같아요. 소수점을 그 0의 개수만큼 오른쪽으로 옮기면 돼요.</p>
+<div class="calc">
+  <div class="ln"><span class="m">\(0.41 \div 0.1 = 0.41 \times 10 = 4.1\)</span><span class="why">소수점을 오른쪽으로 1칸</span></div>
+  <div class="ln"><span class="m">\(0.0401 \div 0.01 = 4.01\)</span><span class="why">100을 곱한 것과 같음, 오른쪽으로 2칸</span></div>
+  <div class="ln"><span class="m">\(0.004001 \div 0.001 = 4.001\)</span><span class="why">오른쪽으로 3칸</span></div>
+</div></div>
+<div data-ref="rule-3"><p class="ref-title">규칙 3 · 앞에 곱한 숫자는 그대로 따라 나온다</p><div class="calc">
+  <div class="ln"><span class="m">\(2x^3\)의 증가량은 \(x^3\)의 증가량의 2배</span><span class="why">모든 y 값이 2배라서 증가량도 2배</span></div>
+  <div class="ln res"><span class="m">\((2x^3)' = 2 \times 3x^2 = 6x^2\)</span><span class="why"><button type="button" class="ref" data-ref="rule-2" aria-expanded="false">규칙 2</button>에 2를 곱함</span></div>
+</div></div>
+<div data-ref="tool-4"><p class="ref-title">도구 4 · 분배법칙: 괄호 안 모든 항에 곱하기</p><div class="calc">
+  <div class="ln"><span class="m">\((a+b)(c+d)\)</span><span class="why">앞 괄호의 각 항이 뒤 괄호의 각 항과 한 번씩 만남</span></div>
+  <div class="ln"><span class="m">\(= ac + ad + bc + bd\)</span><span class="why">a×c, a×d, b×c, b×d를 모두 더함</span></div>
+</div></div>
+<div data-ref="rule-4"><p class="ref-title">규칙 4 · 숫자만 있는 항을 미분하면 0</p><div class="calc">
+  <div class="ln"><span class="m">\(y = 5\)</span><span class="why">x가 무엇이든 y는 항상 5</span></div>
+  <div class="ln"><span class="m">\(\displaystyle \frac{5 - 5}{h} = \frac{0}{h} = 0\)</span><span class="why">y의 증가량이 0</span></div>
+  <div class="ln res"><span class="m">\((5)' = 0\)</span><span class="why">수평선은 기울기 0</span></div>
+</div></div>
+<div data-ref="tool-5"><p class="ref-title">도구 5 · 분수의 덧셈은 분모를 맞춘 다음</p><div class="calc">
+  <div class="ln"><span class="m">\(\displaystyle \frac{1}{3} + 1 = \frac{1}{3} + \frac{3}{3}\)</span><span class="why">1을 분모 3인 분수로 바꾸면 \(\frac{3}{3}\)</span></div>
+  <div class="ln res"><span class="m">\(\displaystyle = \frac{1+3}{3} = \frac{4}{3}\)</span><span class="why">분모가 같으면 분자끼리 더함</span></div>
+</div></div>
+<div data-ref="rule-5"><p class="ref-title">규칙 5 · 더해진 식은 각각 미분해서 더한다</p><div class="calc">
+  <div class="ln"><span class="m">\((x^2 + 1)' = (x^2)' + (1)'\)</span><span class="why">증가량도 각각 더해지기 때문</span></div>
+  <div class="ln res"><span class="m">\(= 2x + 0 = 2x\)</span><span class="why"><button type="button" class="ref" data-ref="rule-1" aria-expanded="false">규칙 1</button>과 <button type="button" class="ref" data-ref="rule-4" aria-expanded="false">규칙 4</button></span></div>
+</div></div>
+<div data-ref="diff-7"><p class="ref-title">7단계 · h를 문자로 두고 계산하기</p><div class="calc">
+  <div class="ln"><span class="m">\(\text{옆 점의 } x = 2 + h\)</span><span class="why">원래 점에서 h만큼 옆</span></div>
+  <div class="ln"><span class="m">\(\text{옆 점의 } y = (2+h)^2\)</span><span class="why">x 자리에 \(2+h\)를 대입</span></div>
+  <div class="ln"><span class="m">\(= (2+h)(2+h)\)</span><span class="why"><button type="button" class="ref" data-ref="tool-1" aria-expanded="false">도구 1</button>: 제곱은 2번 곱한 것</span></div>
+  <div class="ln"><span class="m">\(= 2 \times 2 + 2 \times h + h \times 2 + h \times h\)</span><span class="why"><button type="button" class="ref" data-ref="tool-4" aria-expanded="false">도구 4</button>: 분배법칙</span></div>
+  <div class="ln"><span class="m">\(= 4 + 2h + 2h + h^2\)</span><span class="why">각 곱셈 계산</span></div>
+  <div class="ln"><span class="m">\(= 4 + 4h + h^2\)</span><span class="why">\(2h + 2h = 4h\)</span></div>
+  <div class="ln"><span class="m">\(\displaystyle \text{기울기} = \frac{(4 + 4h + h^2) - 4}{(2 + h) - 2}\)</span><span class="why">공식에 대입</span></div>
+  <div class="ln"><span class="m">\(\displaystyle = \frac{4h + h^2}{h}\)</span><span class="why">위: \(4 - 4 = 0\), 아래: \(2 - 2 = 0\)</span></div>
+  <div class="ln"><span class="m">\(\displaystyle = \frac{4h}{h} + \frac{h^2}{h}\)</span><span class="why">분자의 두 항을 각각 h로 나눔</span></div>
+  <div class="ln res"><span class="m">\(= 4 + h\)</span><span class="why">\(\frac{4h}{h} = 4\), \(\frac{h \times h}{h} = h\)</span></div>
+</div>
+<p>h = 0.1을 넣으면 4 + 0.1 = 4.1로 표와 똑같아요. h를 0에 한없이 가깝게 만들면 \(4 + h\)는 <strong>4</strong>에 한없이 가까워져요.</p></div>
+<div data-ref="chain-2"><p class="ref-title">2단계 · 첫째 고리: x에 대한 y의 기울기</p><div class="calc">
+  <div class="ln"><span class="m">\(\displaystyle \frac{dy}{dx} = (x^2 + 1)'\)</span><span class="why">y의 식을 x로 미분</span></div>
+  <div class="ln"><span class="m">\(= (x^2)' + (1)' = 2x + 0 = 2x\)</span><span class="why"><button type="button" class="ref" data-ref="rule-5" aria-expanded="false">규칙 5</button> <button type="button" class="ref" data-ref="rule-1" aria-expanded="false">규칙 1</button> <button type="button" class="ref" data-ref="rule-4" aria-expanded="false">규칙 4</button></span></div>
+  <div class="ln res"><span class="m">\(= 2 \times 1 = 2\)</span><span class="why">x 자리에 1을 대입</span></div>
+</div></div>
+<div data-ref="chain-3"><p class="ref-title">3단계 · 둘째 고리: y에 대한 z의 기울기</p><div class="calc">
+  <div class="ln"><span class="m">\(\displaystyle \frac{dz}{dy} = (y^3 - 2)'\)</span><span class="why">z의 식을 y로 미분</span></div>
+  <div class="ln"><span class="m">\(= (y^3)' - (2)' = 3y^2 - 0 = 3y^2\)</span><span class="why"><button type="button" class="ref" data-ref="rule-2" aria-expanded="false">규칙 2</button> <button type="button" class="ref" data-ref="rule-4" aria-expanded="false">규칙 4</button> (빼기도 각각 미분)</span></div>
+  <div class="ln"><span class="m">\(= 3 \times 2^2\)</span><span class="why">y 자리에 2를 대입 (x가 아니라 y 값!)</span></div>
+  <div class="ln res"><span class="m">\(= 3 \times 4 = 12\)</span><span class="why">\(2^2 = 2 \times 2 = 4\)</span></div>
+</div></div>
+<div data-ref="chain-4"><p class="ref-title">4단계 · 두 고리를 곱하기</p><div class="calc">
+  <div class="ln"><span class="m">\(\displaystyle \frac{dz}{dx} = \frac{dz}{dy} \times \frac{dy}{dx}\)</span><span class="why">연쇄 법칙</span></div>
+  <div class="ln res"><span class="m">\(= 12 \times 2 = 24\)</span><span class="why"><button type="button" class="ref" data-ref="chain-3" aria-expanded="false">3단계</button> × <button type="button" class="ref" data-ref="chain-2" aria-expanded="false">2단계</button></span></div>
+</div></div>
+<div data-ref="anti"><p class="ref-title">5단계 · 미분해서 \(x^2 + 1\)이 되는 식 \(F(x)\) 찾기</p><div class="calc">
+  <div class="ln"><span class="m">\((x^3)' = 3x^2\)</span><span class="why"><button type="button" class="ref" data-ref="rule-2" aria-expanded="false">규칙 2</button>: \(x^3\)을 미분하면 3이 하나 더 붙음</span></div>
+  <div class="ln"><span class="m">\(\displaystyle \left(\frac{x^3}{3}\right)' = \frac{3x^2}{3} = x^2\)</span><span class="why">미리 3으로 나눠 두면 붙은 3이 지워짐</span></div>
+  <div class="ln"><span class="m">\((x)' = 1\)</span><span class="why">직선 \(y = x\)의 기울기는 1</span></div>
+  <div class="ln res"><span class="m">\(\displaystyle F(x) = \frac{x^3}{3} + x\)</span><span class="why"><button type="button" class="ref" data-ref="rule-5" aria-expanded="false">규칙 5</button>: 둘을 더하면 미분 결과는 \(x^2 + 1\)</span></div>
+</div></div>
+<div data-ref="cube"><p class="ref-title">계산 과정 · \(2.002001^3\) 손으로 구하기</p><div class="calc">
+  <div class="ln"><span class="m">\(d = 0.002001\)</span><span class="why">2.002001을 2와 나머지 d로 나눠서 생각</span></div>
+  <div class="ln"><span class="m">\(2.002001^3 = (2 + d)^3\)</span></div>
+  <div class="ln"><span class="m">\(= 2^3 + 3 \times 2^2 \times d\)</span><span class="why"><button type="button" class="ref" data-ref="rule-2" aria-expanded="false">규칙 2</button>의 \((x+h)^3\) 전개에 x = 2, h = d를 넣음</span></div>
+  <div class="ln"><span class="m">\(\quad + 3 \times 2 \times d^2 + d^3\)</span><span class="why">윗줄에 이어지는 식</span></div>
+  <div class="ln"><span class="m">\(2^3 = 8\)</span><span class="why">첫째 항, <button type="button" class="ref" data-ref="tool-1" aria-expanded="false">도구 1</button></span></div>
+  <div class="ln"><span class="m">\(3 \times 2^2 \times d = 12 \times d\)</span><span class="why">둘째 항, \(3 \times 4 = 12\)</span></div>
+  <div class="ln"><span class="m">\(= 12 \times 0.002001\)</span></div>
+  <div class="ln"><span class="m">\(= 0.024012\)</span><span class="why">\(12 \times 2001 = 24012\), 소수점 아래 6자리</span></div>
+  <div class="ln"><span class="m">\(d^2 = 0.002001 \times 0.002001\)</span><span class="why">셋째 항 준비</span></div>
+  <div class="ln"><span class="m">\(= 0.000004004001\)</span><span class="why">\(2001 \times 2001 = 4004001\), 소수점 아래 6+6=12자리</span></div>
+  <div class="ln"><span class="m">\(3 \times 2 \times d^2 = 6 \times d^2\)</span><span class="why">셋째 항</span></div>
+  <div class="ln"><span class="m">\(= 6 \times 0.000004004001\)</span></div>
+  <div class="ln"><span class="m">\(= 0.000024024006\)</span><span class="why">\(6 \times 4004001 = 24024006\)</span></div>
+  <div class="ln"><span class="m">\(d^3 \approx 0.000000008012\)</span><span class="why">넷째 항, 아주 작아서 결과에 거의 영향 없음</span></div>
+  <div class="ln"><span class="m">\(8 + 0.024012\)</span><span class="why">첫째 항 + 둘째 항</span></div>
+  <div class="ln"><span class="m">\(= 8.024012\)</span></div>
+  <div class="ln"><span class="m">\(8.024012 + 0.000024024006\)</span><span class="why">+ 셋째 항</span></div>
+  <div class="ln"><span class="m">\(= 8.024036024006\)</span></div>
+  <div class="ln"><span class="m">\(8.024036024006 + 0.000000008012\)</span><span class="why">+ 넷째 항</span></div>
+  <div class="ln"><span class="m">\(\approx 8.024036032\)</span></div>
+  <div class="ln res"><span class="m">\(\approx 8.024036\)</span><span class="why">소수점 아래 6자리까지만 쓰고 나머지는 버림</span></div>
+</div></div>
+</div>
+<script>
+document.addEventListener('click', function (e) {
+  var close = e.target.closest('button.ref-close');
+  if (close) {
+    var owner = close.closest('.ref-panel')._owner;
+    owner.click();
+    owner.focus();
+    return;
+  }
+  var b = e.target.closest('button.ref');
+  if (!b) return;
+  if (b._panel) {
+    b._panel.remove();
+    b._panel = null;
+    b.setAttribute('aria-expanded', 'false');
+    return;
+  }
+  var src = document.querySelector('#ref-lib > div[data-ref="' + b.dataset.ref + '"]');
+  var panel = document.createElement('div');
+  panel.className = 'ref-panel';
+  panel.setAttribute('role', 'region');
+  panel.innerHTML = src.innerHTML + '<button type="button" class="ref-close">접기</button>';
+  panel._owner = b;
+  var host = b.closest('.ln, p, li') || b.parentNode;
+  var after = host;
+  while (after.nextElementSibling && after.nextElementSibling.classList.contains('ref-panel')) {
+    after = after.nextElementSibling;
+  }
+  after.after(panel);
+  b._panel = panel;
+  b.setAttribute('aria-expanded', 'true');
+});
+</script>
+
+</body>
+</html>
