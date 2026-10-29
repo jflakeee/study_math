@@ -1,0 +1,495 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>그림으로 보는 미분 적분</title>
+<style>
+:root{
+  --bg:#fbfaf7; --surface:#ffffff; --text:#1f2328; --muted:#5d6670; --line:#e3e0d8;
+  --accent:#c2410c; --curve:#1d4ed8; --area:rgba(29,78,216,.14); --code-bg:#f3f1ec;
+  --green:#15803d; --green-bg:rgba(21,128,61,.10); --violet:#7c3aed; --soft:#fff7ed;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#16181c; --surface:#1e2127; --text:#e6e8eb; --muted:#9aa3ad; --line:#2f343c;
+    --accent:#fb923c; --curve:#7aa2ff; --area:rgba(122,162,255,.18); --code-bg:#262a31;
+    --green:#4ade80; --green-bg:rgba(74,222,128,.12); --violet:#c4a5ff; --soft:#2a221b;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#16181c; --surface:#1e2127; --text:#e6e8eb; --muted:#9aa3ad; --line:#2f343c;
+  --accent:#fb923c; --curve:#7aa2ff; --area:rgba(122,162,255,.18); --code-bg:#262a31;
+  --green:#4ade80; --green-bg:rgba(74,222,128,.12); --violet:#c4a5ff; --soft:#2a221b;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);word-break:keep-all;
+  font:17px/1.8 "Pretendard","Apple SD Gothic Neo","Malgun Gothic",system-ui,sans-serif}
+main{max-width:760px;margin:0 auto;padding:48px 16px 80px}
+header p{color:var(--muted);margin:.25rem 0 0}
+h1{font-size:2rem;line-height:1.3;margin:0}
+h2{font-size:1.4rem;margin:3rem 0 .75rem;padding-top:1.5rem;border-top:1px solid var(--line)}
+h2 .n{color:var(--accent);margin-right:.4em}
+h3{font-size:1.1rem;margin:2rem 0 .5rem}
+nav{margin:1.5rem 0 0;padding:14px 18px;background:var(--surface);border:1px solid var(--line);border-radius:10px}
+nav ol{margin:0;padding-left:1.2em}
+nav a{color:inherit}
+.analogy{background:var(--soft);border-radius:10px;padding:12px 16px;margin:1.25rem 0}
+.analogy b{color:var(--accent)}
+.key{border:2px solid var(--green);background:var(--green-bg);border-radius:10px;padding:10px 16px;margin:1.25rem 0}
+.key b{color:var(--green)}
+ol.steps{list-style:none;counter-reset:s;padding:0;margin:1rem 0}
+ol.steps>li{counter-increment:s;position:relative;padding:12px 16px 12px 52px;margin:10px 0;
+  background:var(--surface);border:1px solid var(--line);border-radius:10px}
+ol.steps>li::before{content:counter(s);position:absolute;left:14px;top:13px;width:26px;height:26px;border-radius:50%;
+  background:var(--accent);color:#fff;font-weight:700;font-size:.85rem;display:flex;align-items:center;justify-content:center}
+figure{margin:1.25rem 0;background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:12px}
+figure svg{display:block;width:100%;max-width:480px;height:auto;margin:0 auto}
+figcaption{text-align:center;color:var(--muted);font-size:.9rem}
+.pair{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.pair figure{margin:0}
+@media (max-width:560px){.pair{grid-template-columns:1fr}}
+svg .grid{stroke:var(--line);stroke-width:1}
+svg .ax{stroke:var(--muted);stroke-width:1}
+svg .curve{fill:none;stroke:var(--curve);stroke-width:2.5}
+svg .tan{fill:none;stroke:var(--accent);stroke-width:2;stroke-dasharray:6 4}
+svg .sec{fill:none;stroke:var(--violet);stroke-width:2}
+svg .leg{fill:none;stroke:var(--accent);stroke-width:2.5}
+svg .dot{fill:var(--accent)}
+svg .dot2{fill:var(--violet)}
+svg .area{fill:var(--area);stroke:none}
+svg .gap{fill:var(--accent);fill-opacity:.28;stroke:none}
+svg .barbg{fill:var(--surface);stroke:none}
+svg .bar{fill:var(--area);stroke:var(--curve);stroke-width:1}
+svg .sq{fill:var(--area);stroke:var(--curve);stroke-width:1.5}
+svg .strip{fill:var(--accent);fill-opacity:.22;stroke:var(--accent);stroke-width:1.5}
+svg .corner{fill:var(--green-bg);stroke:var(--green);stroke-width:1.5}
+svg .grow{fill:var(--accent);fill-opacity:.55;stroke:none}
+svg .half{fill:none;stroke:var(--accent);stroke-width:1.5;stroke-dasharray:5 4}
+svg .facebg{fill:var(--surface);stroke:none}
+svg .cube{fill:var(--curve);stroke:var(--curve);stroke-width:1.2;stroke-linejoin:round}
+svg .slab{fill:var(--accent);stroke:var(--accent);stroke-width:1.2;stroke-linejoin:round}
+svg .cell{stroke:var(--surface);stroke-width:2}
+svg .arrow{stroke:var(--accent);stroke-width:2.5;fill:none}
+svg text{fill:var(--text);font-size:14px}
+svg text.sm{font-size:12px;fill:var(--muted)}
+svg text.acc{fill:var(--accent);font-weight:700}
+svg text.vio{fill:var(--violet);font-weight:700}
+svg text.grn{fill:var(--green);font-weight:700}
+.ctrl{display:flex;align-items:center;gap:10px;margin:10px 4px 0;font-size:.95rem}
+.ctrl label{white-space:nowrap;color:var(--muted)}
+.ctrl input[type=range]{flex:1;accent-color:var(--accent);min-width:0}
+.ctrl output{min-width:3.2em;text-align:right;font-weight:700;font-variant-numeric:tabular-nums}
+.readout{margin:10px 4px 2px;padding:10px 14px;background:var(--code-bg);border-radius:8px;font-size:.95rem;line-height:1.7;
+  font-variant-numeric:tabular-nums}
+.readout b{color:var(--accent)}
+.flow{display:flex;align-items:center;justify-content:center;gap:6px;flex-wrap:wrap;margin:1.25rem 0;
+  background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:16px 10px}
+.flow .box{border:2px solid var(--curve);border-radius:10px;padding:6px 14px;font-weight:700;text-align:center;min-width:64px}
+.flow .arr{color:var(--accent);font-weight:700;text-align:center;font-size:.9rem;line-height:1.3}
+.flow .arr span{display:block;font-size:1.4rem}
+.table-wrap{overflow-x:auto}
+table{border-collapse:collapse;width:100%;font-size:.95rem}
+th,td{border-bottom:1px solid var(--line);padding:8px 10px;text-align:left}
+th{color:var(--muted);font-weight:600}
+td.num{font-variant-numeric:tabular-nums;font-family:"JetBrains Mono",Consolas,monospace}
+tr.total td{font-weight:700;border-top:2px solid var(--line)}
+@media (max-width:480px){ol.steps>li{padding:12px 12px 12px 44px} ol.steps>li::before{left:10px} th,td{padding:8px 6px}}
+details{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:10px 16px;margin:12px 0}
+details summary{cursor:pointer;font-weight:600}
+details[open] summary{margin-bottom:.4rem}
+.calc{font-family:"JetBrains Mono",Consolas,monospace;font-size:.92rem;line-height:1.9;white-space:pre-wrap;margin:.25rem 0}
+.calc .c{color:var(--muted);font-family:"Pretendard","Apple SD Gothic Neo","Malgun Gothic",sans-serif}
+footer{margin-top:3rem;color:var(--muted);font-size:.9rem}
+footer a{color:inherit}
+.docnav{display:flex;flex-wrap:wrap;gap:6px;margin:0 0 1.25rem;font-size:.9rem}
+.docnav a{padding:4px 12px;border:1px solid var(--line);border-radius:999px;background:var(--surface);color:var(--muted);text-decoration:none}
+.docnav a:hover{border-color:var(--accent);color:var(--text)}
+.docnav a[aria-current="page"]{border-color:var(--accent);color:var(--accent);font-weight:600}
+</style>
+</head>
+<body>
+<main>
+<div class="docnav" aria-label="문서 이동">
+  <a href="index.html">목록</a>
+  <a href="calculus_visual.html" aria-current="page">그림 풀이</a>
+  <a href="calculus_middle_school.html">중학생 풀이</a>
+  <a href="calculus_step_by_step.html">상세 풀이</a>
+  <a href="calculus_python.html">Python 코드</a>
+</div>
+<header>
+  <h1>그림으로 보는 미분과 적분</h1>
+  <p>식은 거의 없어요. 칸을 세고, 막대를 쌓고, 슬라이더를 움직이면서 눈으로 확인해요.</p>
+  <nav>
+    <ol>
+      <li><a href="#slope">가파르기: 계단 칸 세기</a></li>
+      <li><a href="#diff">미분: 곡선의 가파르기</a></li>
+      <li><a href="#integral">적분: 막대로 넓이 채우기</a></li>
+      <li><a href="#link">미분과 적분은 서로 반대</a></li>
+      <li><a href="#more">더 알아보기: 편미분과 연쇄 법칙</a></li>
+      <li><a href="#words">그림 말 ↔ 수학 말</a></li>
+    </ol>
+  </nav>
+</header>
+
+<section id="slope">
+<h2><span class="n">1</span>가파르기: 계단 칸 세기</h2>
+<p>언덕길이 얼마나 가파른지는 <b>옆으로 1칸 갈 때 위로 몇 칸 올라가는지</b>로 정해요. 모눈종이에서 칸만 세면 돼요.</p>
+<figure>
+  <svg id="fig-stairs" viewBox="0 0 430 250" role="img" aria-label="가로 3칸에 세로 6칸 오르는 가파른 길과 가로 4칸에 세로 2칸 오르는 완만한 길"></svg>
+  <figcaption>왼쪽 길: 가로 3칸에 세로 6칸 · 오른쪽 길: 가로 4칸에 세로 2칸</figcaption>
+</figure>
+<ol class="steps">
+  <li>왼쪽 길: 세로 6칸 ÷ 가로 3칸 = <b>2</b> → 옆으로 1칸마다 2칸씩 올라가요.</li>
+  <li>오른쪽 길: 세로 2칸 ÷ 가로 4칸 = <b>0.5</b> → 옆으로 1칸마다 반 칸씩 올라가요.</li>
+</ol>
+<div class="key"><b>가파르기 = 세로 칸 수 ÷ 가로 칸 수.</b> 숫자가 클수록 가파른 길이에요. 이 문서 전체가 이 나눗셈 하나로 움직여요.</div>
+</section>
+
+<section id="diff">
+<h2><span class="n">2</span>미분: 곡선의 가파르기</h2>
+<p>직선은 어디서나 가파르기가 같지만, 휘어진 길은 자리마다 달라요. 곡선 y = x²처럼 생긴 길에서 <b>x가 2인 자리</b>의 가파르기를 재 볼게요.</p>
+<h3>두 점을 점점 가깝게</h3>
+<p>곡선 위에 점 두 개를 찍고 계단(주황색)을 그려 가파르기를 재요. 슬라이더를 왼쪽으로 밀어 두 점을 가깝게 붙여 보세요.</p>
+<figure>
+  <svg id="fig-secant" viewBox="0 0 420 320" role="img" aria-label="y=x² 곡선 위 두 점을 잇는 직선이 접선에 가까워지는 모습"></svg>
+  <div class="ctrl"><label for="h-secant">가로 거리</label><input id="h-secant" type="range" min="0.01" max="2" step="0.01" value="1.5"><output id="o-secant"></output></div>
+  <div class="readout" id="r-secant" aria-live="polite"></div>
+  <figcaption>보라색: 두 점을 잇는 직선 · 주황 점선: 그 자리에 딱 붙는 직선(접선)</figcaption>
+</figure>
+<p>가로 거리를 줄일수록 가파르기는 5.5 → 4.5 → 4.1 → 4.01 … 이렇게 <b>4</b>에 다가가요. 이렇게 "두 점을 한없이 붙였을 때의 가파르기"를 구하는 일이 <b>미분</b>이에요.</p>
+
+<h3>왜 하필 4일까? 정사각형으로 보기</h3>
+<p>x²은 <b>변이 x인 정사각형의 넓이</b>예요. 변 2짜리 정사각형의 변을 아주 조금(h만큼) 늘리면 넓이가 어떻게 불어나는지 보세요.</p>
+<figure>
+  <svg id="fig-square" viewBox="0 0 320 300" role="img" aria-label="변 2인 정사각형의 변을 h만큼 늘렸을 때 생기는 띠 2장과 모서리 조각"></svg>
+  <div class="ctrl"><label for="h-square">늘린 길이 h</label><input id="h-square" type="range" min="0.05" max="1" step="0.05" value="0.5"><output id="o-square"></output></div>
+  <div class="readout" id="r-square" aria-live="polite"></div>
+  <figcaption>파란 정사각형: 원래 넓이 4 · 주황 띠 2장 · 초록 모서리 조각</figcaption>
+</figure>
+<ol class="steps">
+  <li>늘어난 부분은 <b>주황 띠 2장</b>과 <b>초록 모서리 조각 1개</b>예요.</li>
+  <li>띠 한 장은 길이 2, 두께 h예요. 그래서 띠 2장을 합한 넓이는 h 1칸당 2 + 2 = <b>4</b>예요.</li>
+  <li>모서리 조각은 h × h라서, h를 작게 하면 띠보다 훨씬 빨리 사라져요(h가 0.1이면 띠는 0.4, 조각은 0.01).</li>
+  <li>결국 "늘어난 넓이 ÷ h"는 4 + h가 되고, h를 0에 가깝게 하면 <b>4</b>만 남아요. 위 그래프의 가파르기와 똑같은 숫자예요!</li>
+</ol>
+<div class="key"><b>변이 x인 정사각형은 띠 2장(각 길이 x)이 붙으며 자라요.</b> 그래서 x²의 가파르기는 어느 자리에서나 <b>2 × x</b>예요. x = 2이면 4, x = 3이면 6.</div>
+
+<h3>정육면체도 똑같이</h3>
+<p>x³은 <b>변이 x인 정육면체의 부피</b>예요. 변을 조금 늘리면 이번엔 <b>판 3장</b>이 붙어요.</p>
+<figure>
+  <svg id="fig-cube" viewBox="0 0 320 260" role="img" aria-label="정육면체의 세 면에 얇은 판 3장이 붙는 모습"></svg>
+  <figcaption>파란 정육면체(변 x)에 붙을 주황 판 3장을 조금 떼어 그렸어요(각각 x × x 크기, 두께 h)</figcaption>
+</figure>
+<p>판 한 장은 x × x 크기이고, 판 사이 모서리 틈새 조각은 정사각형 때처럼 h가 작아지면 사라져요. 그래서 x³의 가파르기는 <b>3 × x × x</b>예요. x = 2이면 3 × 2 × 2 = <b>12</b>. 이 결과는 4장과 5장에서 다시 써요.</p>
+</section>
+
+<section id="integral">
+<h2><span class="n">3</span>적분: 막대로 넓이 채우기</h2>
+<h3>삼각형이면 바로 보여요</h3>
+<p>직선 y = 2x 아래, x가 0부터 1까지인 부분은 삼각형이에요.</p>
+<figure>
+  <svg id="fig-tri" viewBox="0 0 320 260" role="img" aria-label="y=2x 아래 삼각형이 가로 1 세로 2 직사각형의 절반인 모습"></svg>
+  <figcaption>점선 직사각형(가로 1 × 세로 2 = 2)의 딱 절반 → 넓이 <b>1</b></figcaption>
+</figure>
+<h3>곡선이면 막대로 채워요</h3>
+<p>곡선 y = x² + 1 아래는 반듯한 도형이 아니에요. 그래서 <b>폭이 같은 막대</b>를 세워 채우고, 막대 넓이(가로 × 세로)를 모두 더해요. 막대 개수를 늘려 보세요.</p>
+<figure>
+  <svg id="fig-bars" viewBox="0 0 420 300" role="img" aria-label="y=x²+1 아래를 막대로 채운 모습과 남는 빈틈"></svg>
+  <div class="ctrl"><label for="n-bars">막대 개수</label><input id="n-bars" type="range" min="1" max="50" step="1" value="5"><output id="o-bars"></output></div>
+  <div class="readout" id="r-bars" aria-live="polite"></div>
+  <figcaption>파란 막대: 지금까지 채운 넓이 · 주황: 아직 못 채운 빈틈</figcaption>
+</figure>
+<details>
+<summary>막대 5개일 때 넓이를 하나씩 계산하기</summary>
+<p>막대 폭은 1 ÷ 5 = 0.2이고, 막대 높이는 막대 왼쪽 끝에서 잰 곡선 높이(x × x + 1)예요.</p>
+<div class="table-wrap"><table>
+  <tr><th>막대</th><th>왼쪽 끝 x</th><th>높이 = x × x + 1</th><th>넓이 = 0.2 × 높이</th></tr>
+  <tr><td>1</td><td class="num">0</td><td class="num">0 × 0 + 1 = 1</td><td class="num">0.2 × 1 = 0.2</td></tr>
+  <tr><td>2</td><td class="num">0.2</td><td class="num">0.04 + 1 = 1.04</td><td class="num">0.2 × 1.04 = 0.208</td></tr>
+  <tr><td>3</td><td class="num">0.4</td><td class="num">0.16 + 1 = 1.16</td><td class="num">0.2 × 1.16 = 0.232</td></tr>
+  <tr><td>4</td><td class="num">0.6</td><td class="num">0.36 + 1 = 1.36</td><td class="num">0.2 × 1.36 = 0.272</td></tr>
+  <tr><td>5</td><td class="num">0.8</td><td class="num">0.64 + 1 = 1.64</td><td class="num">0.2 × 1.64 = 0.328</td></tr>
+  <tr class="total"><td colspan="3">합계</td><td class="num">1.24</td></tr>
+</table></div>
+</details>
+<div class="key"><b>막대를 늘릴수록 빈틈이 줄어요.</b> 1개 → 1, 5개 → 1.24, 10개 → 1.285, 50개 → 1.3234 … 한없이 늘렸을 때 다가가는 값 <b>1.3333…(= 4/3)</b>을 구하는 일이 <b>적분</b>이에요.</div>
+</section>
+
+<section id="link">
+<h2><span class="n">4</span>미분과 적분은 서로 반대</h2>
+<p>막대를 50개, 100개씩 더하지 않고 한 번에 구하는 방법이 있어요. 넓이가 <b>얼마나 빨리 늘어나는지</b>를 보면 돼요. 오른쪽 끝을 움직여 보세요.</p>
+<figure>
+  <svg id="fig-grow" viewBox="0 0 420 300" role="img" aria-label="곡선 아래 넓이가 오른쪽으로 늘어날 때 새로 붙는 얇은 막대"></svg>
+  <div class="ctrl"><label for="t-grow">오른쪽 끝</label><input id="t-grow" type="range" min="0.05" max="0.95" step="0.01" value="0.5"><output id="o-grow"></output></div>
+  <div class="readout" id="r-grow" aria-live="polite"></div>
+  <figcaption>파랑: 지금까지 넓이 · 진한 주황: 폭 0.05만큼 더 갈 때 새로 붙는 막대</figcaption>
+</figure>
+<div class="analogy"><b>물탱크 비유:</b> 물이 차오르는 빠르기는 수도꼭지에서 나오는 물의 양으로 정해져요. 넓이도 마찬가지로, 새로 붙는 막대가 높을수록 빨리 늘어나요.</div>
+<div class="key"><b>넓이가 늘어나는 빠르기 = 그 자리의 곡선 높이.</b> 곧, "넓이의 가파르기"가 곡선이에요. 그래서 넓이를 구하려면 <b>가파르기가 곡선과 같아지는 것</b>을 찾으면 돼요. 미분을 거꾸로 하는 셈이에요.</div>
+<ol class="steps">
+  <li>곡선 높이는 x × x + 1이에요. 가파르기가 이것과 같은 것을 찾아요.</li>
+  <li>2장의 정육면체 그림에서 x³의 가파르기는 3 × x × x였어요. 그러니 <b>x³ ÷ 3</b>의 가파르기는 x × x예요.</li>
+  <li>직선 y = x는 옆으로 1칸마다 1칸 오르니 가파르기가 <b>1</b>이에요.</li>
+  <li>둘을 더한 <b>x³ ÷ 3 + x</b>가 넓이를 알려 줘요. x = 1을 넣으면 1 ÷ 3 + 1 = <b>4/3 = 1.3333…</b></li>
+  <li>막대를 한없이 늘렸을 때의 값과 정확히 같아요.</li>
+</ol>
+</section>
+
+<section id="more">
+<h2><span class="n">5</span>더 알아보기: 편미분과 연쇄 법칙</h2>
+<p>이 두 가지는 그림으로 원리를 보고, 숫자는 2장에서 얻은 결과(정사각형 → 2 × x, 정육면체 → 3 × x × x)로 짧게 계산해요.</p>
+
+<h3>편미분: 언덕에서 한 방향으로만 걷기</h3>
+<p>높이가 2x³ + 3y³인 언덕이 있어요. x는 동쪽, y는 북쪽 방향이에요. 같은 자리 (1, 2)에 서 있어도 <b>어느 쪽으로 걷느냐</b>에 따라 가파르기가 달라요.</p>
+<figure>
+  <svg id="fig-map" viewBox="0 0 300 300" role="img" aria-label="위에서 내려다본 언덕 지도와 점 (1,2)에서 동쪽과 북쪽 화살표"></svg>
+  <figcaption>위에서 내려다본 언덕(진할수록 높음) · 점 (1, 2)에서 동쪽(→)과 북쪽(↑)</figcaption>
+</figure>
+<div class="pair">
+  <figure>
+    <svg id="fig-east" viewBox="0 0 260 220" role="img" aria-label="북쪽 위치를 2로 고정하고 동쪽으로 자른 단면, 가파르기 6"></svg>
+    <figcaption>동쪽으로 자른 단면 → 가파르기 <b>6</b></figcaption>
+  </figure>
+  <figure>
+    <svg id="fig-north" viewBox="0 0 260 220" role="img" aria-label="동쪽 위치를 1로 고정하고 북쪽으로 자른 단면, 가파르기 36"></svg>
+    <figcaption>북쪽으로 자른 단면 → 가파르기 <b>36</b></figcaption>
+  </figure>
+</div>
+<ol class="steps">
+  <li>동쪽으로만 걸으면 y는 2에 고정돼요. 3y³ = 3 × 8 = 24는 그냥 깔린 높이라 가파르기에 영향이 없어요.</li>
+  <li>남은 2x³의 가파르기는 정육면체 판 3장의 2배: 2 × 3 × x × x. x = 1이면 2 × 3 × 1 × 1 = <b>6</b>.</li>
+  <li>북쪽으로만 걸으면 x는 1에 고정되고, 3y³의 가파르기는 3 × 3 × y × y. y = 2이면 3 × 3 × 2 × 2 = <b>36</b>.</li>
+</ol>
+<div class="key"><b>한 방향만 골라 가파르기를 재는 것이 편미분이에요.</b> 같은 자리라도 동쪽은 6, 북쪽은 36으로 북쪽이 훨씬 가팔라요.</div>
+
+<h3>연쇄 법칙: 톱니바퀴 곱하기</h3>
+<p>x가 y를 돌리고(y = x × x + 1), y가 z를 돌려요(z = y³ − 2). x = 1일 때 x를 조금 돌리면 z는 몇 배 돌까요?</p>
+<div class="flow" role="img" aria-label="x가 2배로 y를, y가 12배로 z를 돌려 모두 24배">
+  <div class="box">x</div>
+  <div class="arr">× 2<span>→</span></div>
+  <div class="box">y</div>
+  <div class="arr">× 12<span>→</span></div>
+  <div class="box">z</div>
+  <div class="arr">= × 24</div>
+</div>
+<ol class="steps">
+  <li>x = 1에서 y = x × x + 1의 가파르기: 정사각형 띠 2장 → 2 × 1 = <b>2</b> (+1은 높이만 올릴 뿐 가파르기와 무관해요). 이때 y = 1 + 1 = 2예요.</li>
+  <li>y = 2에서 z = y³ − 2의 가파르기: 정육면체 판 3장 → 3 × 2 × 2 = <b>12</b>.</li>
+  <li>톱니바퀴처럼 배율을 곱해요: 2 × 12 = <b>24</b>.</li>
+</ol>
+<figure>
+  <svg id="fig-cells" viewBox="0 0 440 130" role="img" aria-label="x가 1칸 움직이면 y는 2칸, z는 24칸 움직이는 칸 그림"></svg>
+  <figcaption>x를 아주 조금(1칸) 밀면 y는 2칸, z는 24칸 움직여요</figcaption>
+</figure>
+<details>
+<summary>숫자로 직접 확인하기 (x를 0.001만큼 밀기)</summary>
+<div class="calc">x = 1        → y = 1 × 1 + 1 = 2        → z = 2 × 2 × 2 − 2 = 6
+x = 1.001    → y = 1.001 × 1.001 + 1 = 1.002001 + 1 = 2.002001
+             → z = 2.002001³ − 2 = 8.024036… − 2 = 6.024036…
+<span class="c">y가 움직인 양:</span> 2.002001 − 2 = 0.002001  <span class="c">→ x의 약 2배</span>
+<span class="c">z가 움직인 양:</span> 6.024036 − 6 = 0.024036  <span class="c">→ x의 약 24배</span>
+<span class="c">배율:</span> 0.024036 ÷ 0.001 = 24.036…  <span class="c">→ 미는 양을 줄일수록 24에 다가가요</span></div>
+</details>
+<div class="key"><b>함수 안에 함수가 들어 있으면, 단계마다의 가파르기를 곱해요.</b> 이것이 연쇄 법칙이에요.</div>
+</section>
+
+<section id="words">
+<h2><span class="n">6</span>그림 말 ↔ 수학 말</h2>
+<p>다른 문서나 교과서에서 아래 말을 만나면, 이 문서의 그림을 떠올리면 돼요.</p>
+<div class="table-wrap"><table>
+  <tr><th>이 문서의 그림 말</th><th>수학 말</th><th>기호</th></tr>
+  <tr><td>가파르기 (세로 칸 ÷ 가로 칸)</td><td>기울기, 미분계수</td><td>dy/dx</td></tr>
+  <tr><td>두 점을 한없이 붙여 가파르기 구하기</td><td>미분</td><td>f′(x)</td></tr>
+  <tr><td>정사각형 띠 2장 / 정육면체 판 3장</td><td>x² → 2x, x³ → 3x²</td><td>(xⁿ)′ = n·xⁿ⁻¹</td></tr>
+  <tr><td>한 방향으로만 걸을 때의 가파르기</td><td>편미분</td><td>∂f/∂x</td></tr>
+  <tr><td>톱니바퀴 배율 곱하기</td><td>연쇄 법칙</td><td>dz/dx = dz/dy · dy/dx</td></tr>
+  <tr><td>막대 넓이 모두 더하기</td><td>적분</td><td>∫ f(x) dx</td></tr>
+  <tr><td>넓이가 늘어나는 빠르기 = 곡선 높이</td><td>미적분의 기본 정리</td><td>(∫ f dx)′ = f</td></tr>
+</table></div>
+</section>
+
+<footer>
+  함께 보기: <a href="calculus_middle_school.html">중학생도 이해하는 미분과 적분</a> · <a href="calculus_step_by_step.html">미분과 적분, 한 줄도 건너뛰지 않는 풀이</a> · <a href="calculus_python.html">개발자를 위한 미분과 적분 (Python)</a><br>
+  참고한 글: <a href="https://puppy-foot-it.tistory.com/450">[개발자를 위한 수학] 미분, 적분 (+파이썬)</a> — 기록자_Recordian, 2024
+</footer>
+</main>
+
+<script>
+(function(){
+const NS='http://www.w3.org/2000/svg';
+function el(tag,attrs,parent){const e=document.createElementNS(NS,tag);for(const k in attrs)e.setAttribute(k,attrs[k]);if(parent)parent.appendChild(e);return e}
+function txt(parent,x,y,s,cls,anchor){const t=el('text',{x:x,y:y,'class':cls||'','text-anchor':anchor||'start'},parent);t.textContent=s;return t}
+function fmt(v,d){return String(parseFloat(v.toFixed(d)))}
+function $(id){return document.getElementById(id)}
+let clipN=0;
+// 좌표 틀: 눈금선·축·눈금 숫자를 그리고 값→화면 좌표 함수를 돌려준다
+function frame(svg,o){
+  const vb=svg.viewBox.baseVal,W=vb.width,H=vb.height,L=o.L||40,R=o.R||14,T=o.T||12,B=o.B||28;
+  const X=x=>L+(x-o.x0)/(o.x1-o.x0)*(W-L-R), Y=y=>H-B-(y-o.y0)/(o.y1-o.y0)*(H-T-B);
+  (o.xt||[]).forEach(v=>{el('line',{x1:X(v),y1:T,x2:X(v),y2:H-B,'class':'grid'},svg);txt(svg,X(v),H-B+18,o.xl?o.xl(v):String(v),'sm','middle')});
+  (o.yt||[]).forEach(v=>{el('line',{x1:L,y1:Y(v),x2:W-R,y2:Y(v),'class':'grid'},svg);txt(svg,L-6,Y(v)+4,String(v),'sm','end')});
+  el('line',{x1:L,y1:H-B,x2:W-R,y2:H-B,'class':'ax'},svg);
+  el('line',{x1:L,y1:T,x2:L,y2:H-B,'class':'ax'},svg);
+  const id='clip'+(++clipN), cp=el('clipPath',{id:id},el('defs',{},svg));
+  el('rect',{x:L,y:T,width:W-L-R,height:H-T-B},cp);
+  const g=el('g',{'clip-path':'url(#'+id+')'},svg);
+  if(o.xn)txt(svg,W-R,H-B-6,o.xn,'sm','end');
+  if(o.yn)txt(svg,L+6,T+14,o.yn,'sm');
+  return {X:X,Y:Y,g:g};
+}
+function path(f,a,b,X,Y,n){n=n||120;let d='';for(let i=0;i<=n;i++){const x=a+(b-a)*i/n;d+=(i?'L':'M')+X(x).toFixed(1)+' '+Y(f(x)).toFixed(1)}return d}
+function areaPath(f,a,b,X,Y){return path(f,a,b,X,Y,60)+'L'+X(b).toFixed(1)+' '+Y(0).toFixed(1)+'L'+X(a).toFixed(1)+' '+Y(0).toFixed(1)+'Z'}
+function bind(id,out,fn,d){const r=$(id),o=$(out);const go=()=>{const v=parseFloat(r.value);o.textContent=fmt(v,d);fn(v)};r.addEventListener('input',go);go()}
+
+// 1. 계단
+(function(){
+  const s=$('fig-stairs'),c=30,ox=30,oy=220;
+  for(let i=0;i<=11;i++)el('line',{x1:ox+i*c,y1:oy-7*c,x2:ox+i*c,y2:oy,'class':'grid'},s);
+  for(let j=0;j<=7;j++)el('line',{x1:ox,y1:oy-j*c,x2:ox+11*c,y2:oy-j*c,'class':'grid'},s);
+  function stair(x0,dx,dy,lx,ly){
+    el('path',{d:'M'+(ox+x0*c)+' '+oy+'h'+dx*c+'v'+(-dy*c),'class':'leg'},s);
+    el('line',{x1:ox+x0*c,y1:oy,x2:ox+(x0+dx)*c,y2:oy-dy*c,'class':'curve'},s);
+    el('circle',{cx:ox+x0*c,cy:oy,r:4,'class':'dot'},s);el('circle',{cx:ox+(x0+dx)*c,cy:oy-dy*c,r:4,'class':'dot'},s);
+    txt(s,ox+(x0+dx/2)*c,oy+18,lx,'acc','middle');
+    txt(s,ox+(x0+dx)*c+6,oy-dy*c/2+5,ly,'acc');
+  }
+  stair(0,3,6,'가로 3칸','세로 6칸');
+  stair(6,4,2,'가로 4칸','세로 2칸');
+})();
+
+// 2-1. 두 점 → 접선
+(function(){
+  const s=$('fig-secant'),f=x=>x*x;
+  const F=frame(s,{x0:0,x1:4,y0:0,y1:16,xt:[0,1,2,3,4],yt:[0,4,8,12,16],xn:'x',yn:'y'});
+  el('path',{d:path(f,0,4,F.X,F.Y),'class':'curve'},F.g);
+  el('line',{x1:F.X(0),y1:F.Y(-4),x2:F.X(4),y2:F.Y(12),'class':'tan'},F.g);
+  const sec=el('line',{'class':'sec'},F.g),leg=el('path',{'class':'leg'},s),q=el('circle',{r:5,'class':'dot2'},s);
+  el('circle',{cx:F.X(2),cy:F.Y(4),r:5,'class':'dot'},s);
+  const lx=txt(s,0,0,'','acc','middle'),ly=txt(s,0,0,'','acc');
+  bind('h-secant','o-secant',function(h){
+    const x2=2+h,y2=x2*x2,m=(y2-4)/h;
+    sec.setAttribute('x1',F.X(0));sec.setAttribute('y1',F.Y(4-2*m));sec.setAttribute('x2',F.X(4));sec.setAttribute('y2',F.Y(4+2*m));
+    leg.setAttribute('d','M'+F.X(2)+' '+F.Y(4)+'H'+F.X(x2)+'V'+F.Y(y2));
+    q.setAttribute('cx',F.X(x2));q.setAttribute('cy',F.Y(y2));
+    lx.setAttribute('x',(F.X(2)+F.X(x2))/2);lx.setAttribute('y',F.Y(4)+18);lx.textContent=h>=0.35?'가로':'';
+    const right=x2<3.3;ly.setAttribute('text-anchor',right?'start':'end');
+    ly.setAttribute('x',F.X(x2)+(right?6:-6));ly.setAttribute('y',(F.Y(4)+F.Y(y2))/2+5);ly.textContent=h>=0.35?'세로':'';
+    $('r-secant').innerHTML='가로 <b>'+fmt(h,2)+'</b>칸 갈 때 세로 <b>'+fmt(y2-4,4)+'</b>칸 올라가요<br>가파르기 = '+fmt(y2-4,4)+' ÷ '+fmt(h,2)+' = <b>'+fmt(m,2)+'</b>';
+  },2);
+})();
+
+// 2-2. 정사각형 띠
+(function(){
+  const s=$('fig-square'),u=80,ox=50,oy=34,S=2*u;
+  const right=el('rect',{x:ox+S,y:oy,height:S,'class':'strip'},s),bottom=el('rect',{x:ox,y:oy+S,width:S,'class':'strip'},s),corner=el('rect',{x:ox+S,y:oy+S,'class':'corner'},s);
+  el('rect',{x:ox,y:oy,width:S,height:S,'class':'sq'},s);
+  txt(s,ox+S/2,oy+S/2-4,'원래 넓이','','middle');txt(s,ox+S/2,oy+S/2+16,'2 × 2 = 4','','middle');
+  txt(s,ox-8,oy+S/2+5,'2','acc','end');txt(s,ox+S/2,oy-10,'2','acc','middle');
+  const hl1=txt(s,0,oy-10,'h','acc','middle'),hl2=txt(s,ox-8,0,'h','acc','end');
+  bind('h-square','o-square',function(h){
+    const w=h*u;right.setAttribute('width',w);bottom.setAttribute('height',w);corner.setAttribute('width',w);corner.setAttribute('height',w);
+    hl1.setAttribute('x',ox+S+w/2);hl2.setAttribute('y',oy+S+w/2+5);
+    const strips=2*h*2,c=h*h,tot=strips+c;
+    $('r-square').innerHTML='띠 2장: 2 × '+fmt(h,2)+' × 2 = '+fmt(strips,4)+'<br>모서리 조각: '+fmt(h,2)+' × '+fmt(h,2)+' = '+fmt(c,4)+'<br>늘어난 넓이 합: '+fmt(strips,4)+' + '+fmt(c,4)+' = '+fmt(tot,4)+'<br>늘어난 넓이 ÷ h = '+fmt(tot,4)+' ÷ '+fmt(h,2)+' = <b>'+fmt(tot/h,4)+'</b>';
+  },2);
+})();
+
+// 2-3. 정육면체 판 3장
+(function(){
+  const s=$('fig-cube'),k=44,cx=160,cy=140,c30=Math.cos(Math.PI/6);
+  const P=(x,y,z)=>(cx+(x-z)*k*c30).toFixed(1)+','+(cy-y*k+(x+z)*k*0.5).toFixed(1);
+  function box(x0,x1,y0,y1,z0,z1,cls){
+    [[[x0,y1,z0],[x1,y1,z0],[x1,y1,z1],[x0,y1,z1],.14],[[x1,y0,z0],[x1,y1,z0],[x1,y1,z1],[x1,y0,z1],.24],[[x0,y0,z1],[x1,y0,z1],[x1,y1,z1],[x0,y1,z1],.34]]
+      .forEach(fc=>{const pts=fc.slice(0,4).map(p=>P(p[0],p[1],p[2])).join(' ');el('polygon',{points:pts,'class':'facebg'},s);el('polygon',{points:pts,'class':cls,'fill-opacity':fc[4]},s)});
+  }
+  const a=2,t=0.38,g=0.55;
+  box(0,a,0,a,0,a,'cube');
+  box(a+g,a+g+t,0,a,0,a,'slab');box(0,a,0,a,a+g,a+g+t,'slab');box(0,a,a+g,a+g+t,0,a,'slab');
+  function lab(p,str,cls,anc){const xy=P(p[0],p[1],p[2]).split(',');txt(s,+xy[0],+xy[1],str,cls,anc)}
+  lab([a/2,0,a+g+t],'x ','acc','end');lab([a+g+t,0,a/2],' x','acc','start');lab([a+g+t,a/2,0],'  x','acc','start');
+  lab([0,a+g+t/2,a],'h ','grn','end');
+})();
+
+// 3-1. 삼각형
+(function(){
+  const s=$('fig-tri');
+  const F=frame(s,{x0:0,x1:1.2,y0:0,y1:2.4,xt:[0,0.5,1],yt:[0,1,2],xn:'x',yn:'y'});
+  el('polygon',{points:[[0,0],[1,0],[1,2]].map(p=>F.X(p[0])+','+F.Y(p[1])).join(' '),'class':'area'},F.g);
+  el('rect',{x:F.X(0),y:F.Y(2),width:F.X(1)-F.X(0),height:F.Y(0)-F.Y(2),'class':'half'},F.g);
+  el('line',{x1:F.X(0),y1:F.Y(0),x2:F.X(1.2),y2:F.Y(2.4),'class':'curve'},F.g);
+  txt(s,F.X(0.68),F.Y(0.45),'넓이 1','','middle');txt(s,F.X(0.32),F.Y(1.45),'빈 절반','sm','middle');
+})();
+
+// 3-2. 막대 채우기
+(function(){
+  const s=$('fig-bars'),f=x=>x*x+1;
+  const F=frame(s,{x0:0,x1:1,y0:0,y1:2,xt:[0,0.25,0.5,0.75,1],yt:[0,1,2],xn:'x',yn:'y'});
+  el('path',{d:areaPath(f,0,1,F.X,F.Y),'class':'gap'},F.g);
+  const bars=el('g',{},F.g);
+  el('path',{d:path(f,0,1,F.X,F.Y),'class':'curve'},F.g);
+  bind('n-bars','o-bars',function(n){
+    while(bars.firstChild)bars.removeChild(bars.firstChild);
+    let sum=0;
+    for(let i=0;i<n;i++){const x=i/n,h=f(x),w=1/n;sum+=h*w;
+      const a={x:F.X(x),y:F.Y(h),width:F.X(w)-F.X(0),height:F.Y(0)-F.Y(h)};
+      el('rect',Object.assign({'class':'barbg'},a),bars);el('rect',Object.assign({'class':'bar'},a),bars)}
+    $('r-bars').innerHTML='막대 '+n+'개 넓이 합 = <b>'+fmt(sum,4)+'</b><br>정답 4/3 = 1.3333 · 아직 빈틈 = '+fmt(4/3-sum,4);
+  },0);
+})();
+
+// 4. 넓이가 늘어나는 빠르기
+(function(){
+  const s=$('fig-grow'),f=x=>x*x+1,A=x=>x*x*x/3+x,dw=0.05;
+  const F=frame(s,{x0:0,x1:1,y0:0,y1:2,xt:[0,0.25,0.5,0.75,1],yt:[0,1,2],xn:'x',yn:'y'});
+  const area=el('path',{'class':'area'},F.g),grow=el('path',{'class':'grow'},F.g);
+  el('path',{d:path(f,0,1,F.X,F.Y),'class':'curve'},F.g);
+  const hl=el('line',{'class':'tan'},s),ht=txt(s,0,0,'','acc','end');
+  bind('t-grow','o-grow',function(t){
+    area.setAttribute('d',areaPath(f,0,t,F.X,F.Y));grow.setAttribute('d',areaPath(f,t,t+dw,F.X,F.Y));
+    hl.setAttribute('x1',F.X(t));hl.setAttribute('x2',F.X(t));hl.setAttribute('y1',F.Y(0));hl.setAttribute('y2',F.Y(f(t)));
+    ht.setAttribute('x',F.X(t)-6);ht.setAttribute('y',F.Y(f(t))-8);ht.textContent='높이 '+fmt(f(t),4);
+    const approx=f(t)*dw,real=A(t+dw)-A(t);
+    $('r-grow').innerHTML='지금까지 넓이 = '+fmt(A(t),4)+'<br>새로 붙는 막대 ≈ 높이 × 폭 = '+fmt(f(t),4)+' × 0.05 = <b>'+fmt(approx,4)+'</b> (실제 '+fmt(real,4)+')';
+  },2);
+})();
+
+// 5. 언덕 지도
+(function(){
+  const s=$('fig-map'),f=(x,y)=>2*x*x*x+3*y*y*y,nx=10,ny=10,x1=1.5,y1=2.5,max=f(x1,y1);
+  const F=frame(s,{x0:0,x1:x1,y0:0,y1:y1,xt:[0,0.5,1,1.5],yt:[0,1,2],xn:'x 동쪽',yn:'y 북쪽',L:36,T:30});
+  for(let i=0;i<nx;i++)for(let j=0;j<ny;j++){
+    const xa=i*x1/nx,xb=(i+1)*x1/nx,ya=j*y1/ny,yb=(j+1)*y1/ny,v=f((xa+xb)/2,(ya+yb)/2)/max;
+    el('rect',{x:F.X(xa),y:F.Y(yb),width:F.X(xb)-F.X(xa),height:F.Y(ya)-F.Y(yb),fill:'var(--curve)','fill-opacity':(0.05+0.6*v).toFixed(3),'class':'cell'},F.g)}
+  const px=F.X(1),py=F.Y(2);
+  el('defs',{},s).innerHTML='<marker id="ah" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="var(--accent)"/></marker>';
+  el('line',{x1:px,y1:py,x2:px+44,y2:py,'class':'arrow','marker-end':'url(#ah)'},s);
+  el('line',{x1:px,y1:py,x2:px,y2:py-44,'class':'arrow','marker-end':'url(#ah)'},s);
+  el('circle',{cx:px,cy:py,r:5,'class':'dot'},s);
+  txt(s,px+50,py+5,'동','acc');txt(s,px,py-50,'북','acc','middle');txt(s,px-8,py+18,'(1, 2)','','end');
+})();
+
+// 5. 단면 두 장
+function section(id,o){
+  const s=$(id),F=frame(s,o);
+  el('path',{d:path(o.f,o.x0,o.x1,F.X,F.Y),'class':'curve'},F.g);
+  const a=o.p-o.span,b=o.p+o.span,fp=o.f(o.p);
+  el('line',{x1:F.X(a),y1:F.Y(fp+o.m*(a-o.p)),x2:F.X(b),y2:F.Y(fp+o.m*(b-o.p)),'class':'tan'},F.g);
+  el('circle',{cx:F.X(o.p),cy:F.Y(fp),r:5,'class':'dot'},s);
+  txt(s,F.X(o.p)-8,F.Y(fp)-10,'가파르기 '+o.m,'acc','end');
+}
+section('fig-east',{f:x=>2*x*x*x+24,x0:0,x1:1.6,y0:22,y1:34,xt:[0,0.5,1,1.5],yt:[22,26,30,34],xn:'x (동쪽)',yn:'높이',p:1,m:6,span:0.4});
+section('fig-north',{f:y=>2+3*y*y*y,x0:0,x1:2.6,y0:0,y1:56,xt:[0,1,2],yt:[0,20,40],xn:'y (북쪽)',yn:'높이',p:2,m:36,span:0.3});
+
+// 5. 칸 그림
+(function(){
+  const s=$('fig-cells'),c=15,ox=46,rows=[['x',1,'var(--curve)','1칸'],['y',2,'var(--violet)','2칸'],['z',24,'var(--accent)','24칸']];
+  rows.forEach((r,i)=>{const y=14+i*38;txt(s,ox-12,y+14,r[0],'','end');
+    for(let j=0;j<r[1];j++)el('rect',{x:ox+j*c,y:y,width:c,height:c+4,fill:r[2],'class':'cell'},s);
+    if(r[1]<24)txt(s,ox+r[1]*c+8,y+14,r[3],'sm');
+    else txt(s,ox+24*c,y+34,r[3],'sm','end');});
+})();
+})();
+</script>
+</body>
+</html>
