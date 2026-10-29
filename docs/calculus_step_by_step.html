@@ -114,10 +114,20 @@ button.ref:focus-visible,button.ref-close:focus-visible{outline:2px solid var(--
   .ref-panel .calc .m{font-size:.9em} .ref-panel .ref-panel{margin-left:-4px;margin-right:-4px}}
 button.ref-close{font:inherit;font-size:.85rem;color:var(--muted);background:var(--surface);cursor:pointer;
   border:1px solid var(--line);border-radius:6px;padding:2px 12px;margin-top:4px}
+.docnav{display:flex;flex-wrap:wrap;gap:6px;margin:0 0 1.25rem;font-size:.9rem}
+.docnav a{padding:4px 12px;border:1px solid var(--line);border-radius:999px;background:var(--surface);color:var(--muted);text-decoration:none}
+.docnav a:hover{border-color:var(--accent);color:var(--text)}
+.docnav a[aria-current="page"]{border-color:var(--accent);color:var(--accent);font-weight:600}
 </style>
 </head>
 <body>
 <main>
+<div class="docnav" aria-label="문서 이동">
+  <a href="index.html">목록</a>
+  <a href="calculus_middle_school.html">중학생 풀이</a>
+  <a href="calculus_step_by_step.html" aria-current="page">상세 풀이</a>
+  <a href="calculus_python.html">Python 코드</a>
+</div>
 <header>
   <h1>미분과 적분, 한 줄도 건너뛰지 않는 풀이</h1>
   <p>숫자를 대입하는 순간, 거듭제곱 계산, 소수 곱셈과 나눗셈, 분수 덧셈까지 모든 계산을 한 줄씩 펼쳐 썼어요. 각 줄 옆의 <span style="color:var(--muted)">← 설명</span>은 "왜 그렇게 되는지"예요. 앞에서 설명한 내용을 가리키는 <b style="color:var(--accent)">▸ 버튼</b>을 누르면 그 줄 바로 아래에 해당 풀이가 펼쳐져요.</p>

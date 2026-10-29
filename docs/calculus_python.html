@@ -61,10 +61,20 @@ th{color:var(--muted);font-weight:600}
 td.num{font-variant-numeric:tabular-nums;font-family:"JetBrains Mono",Consolas,monospace}
 footer{margin-top:3rem;color:var(--muted);font-size:.9rem}
 footer a{color:inherit}
+.docnav{display:flex;flex-wrap:wrap;gap:6px;margin:0 0 1.25rem;font-size:.9rem}
+.docnav a{padding:4px 12px;border:1px solid var(--line);border-radius:999px;background:var(--surface);color:var(--muted);text-decoration:none}
+.docnav a:hover{border-color:var(--accent);color:var(--text)}
+.docnav a[aria-current="page"]{border-color:var(--accent);color:var(--accent);font-weight:600}
 </style>
 </head>
 <body>
 <main>
+<div class="docnav" aria-label="문서 이동">
+  <a href="index.html">목록</a>
+  <a href="calculus_middle_school.html">중학생 풀이</a>
+  <a href="calculus_step_by_step.html">상세 풀이</a>
+  <a href="calculus_python.html" aria-current="page">Python 코드</a>
+</div>
 <header>
   <h1>개발자를 위한 미분과 적분</h1>
   <p>Python(SymPy)으로 직접 계산하며 정리하는 미분, 편도함수, 연쇄 법칙, 적분</p>
@@ -202,6 +212,7 @@ print(integrate(x ** 2 + 1, (x, 0, 1)))   <span class="out"># 4/3</span></code><
 </section>
 
 <footer>
+  함께 보기: <a href="calculus_middle_school.html">중학생도 이해하는 미분과 적분</a> · <a href="calculus_step_by_step.html">미분과 적분, 한 줄도 건너뛰지 않는 풀이</a><br>
   참고한 글: <a href="https://puppy-foot-it.tistory.com/450">[개발자를 위한 수학] 미분, 적분 (+파이썬)</a> — 기록자_Recordian, 2024. 이 문서는 해당 글의 주제 구성을 바탕으로 새로 작성했습니다.
 </footer>
 </main>
